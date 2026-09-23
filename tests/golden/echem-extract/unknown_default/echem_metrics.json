@@ -1,0 +1,19 @@
+[
+  {
+    "file": "unknown_synth.CSV",
+    "item_code": "0x0999",
+    "item_name": "未知の測定",
+    "kind": "CP",
+    "phase_code": "0x0600",
+    "phase_name": "本測定",
+    "cycle": 1,
+    "n_points": 40,
+    "start_time": "2026-01-02 09:00:00",
+    "end_time": "2026-01-02 09:00:20",
+    "average_potential_V": -0.520483135,
+    "potential_std_V": 0.011520521789106382,
+    "potential_min_V": -0.5399341,
+    "potential_max_V": -0.5008008,
+    "potential_n": 40
+  }
+]

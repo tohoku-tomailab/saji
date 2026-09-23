@@ -1,0 +1,71 @@
+[
+  {
+    "file": "cp_synth.CSV",
+    "item_code": "0x0506",
+    "item_name": "CP ｸﾛﾉﾎﾟﾃﾝｼｮﾒﾄﾘ",
+    "kind": "CP",
+    "phase_code": "0x0601",
+    "phase_name": "自然電位測定",
+    "cycle": 1,
+    "n_points": 10,
+    "start_time": "2026-01-01 10:00:00",
+    "end_time": "2026-01-01 10:00:10",
+    "area_cm2": 1.0,
+    "reference_electrode": "Ag/AgCl",
+    "potential_error": "指定した時間範囲にデータがありません: 60.0〜None"
+  },
+  {
+    "file": "cp_synth.CSV",
+    "item_code": "0x0506",
+    "item_name": "CP ｸﾛﾉﾎﾟﾃﾝｼｮﾒﾄﾘ",
+    "kind": "CP",
+    "phase_code": "0x0600",
+    "phase_name": "本測定",
+    "cycle": 1,
+    "n_points": 120,
+    "start_time": "2026-01-01 10:00:10",
+    "end_time": "2026-01-01 10:02:10",
+    "area_cm2": 1.0,
+    "reference_electrode": "Ag/AgCl",
+    "average_potential_V": -1.2166123278688525,
+    "potential_std_V": 0.016813004069080806,
+    "potential_min_V": -1.221844,
+    "potential_max_V": -1.087001,
+    "potential_n": 61,
+    "potential_time_range": [
+      60.0,
+      null
+    ],
+    "average_potential_by_kind_V": {
+      "第1電流": -1.087001,
+      "第2電流": -1.2187725166666667
+    }
+  },
+  {
+    "file": "cp_synth.CSV",
+    "item_code": "0x0506",
+    "item_name": "CP ｸﾛﾉﾎﾟﾃﾝｼｮﾒﾄﾘ",
+    "kind": "CP",
+    "phase_code": "0x0600",
+    "phase_name": "本測定",
+    "cycle": 2,
+    "n_points": 120,
+    "start_time": null,
+    "end_time": null,
+    "area_cm2": 1.0,
+    "reference_electrode": "Ag/AgCl",
+    "average_potential_V": -1.2263068196721312,
+    "potential_std_V": 0.016768180993176944,
+    "potential_min_V": -1.232231,
+    "potential_max_V": -1.097039,
+    "potential_n": 61,
+    "potential_time_range": [
+      60.0,
+      null
+    ],
+    "average_potential_by_kind_V": {
+      "第1電流": -1.097039,
+      "第2電流": -1.2284612833333335
+    }
+  }
+]

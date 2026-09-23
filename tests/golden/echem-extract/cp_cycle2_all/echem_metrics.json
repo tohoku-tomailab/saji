@@ -1,0 +1,26 @@
+[
+  {
+    "file": "cp_synth.CSV",
+    "item_code": "0x0506",
+    "item_name": "CP ｸﾛﾉﾎﾟﾃﾝｼｮﾒﾄﾘ",
+    "kind": "CP",
+    "phase_code": "0x0600",
+    "phase_name": "本測定",
+    "cycle": 2,
+    "n_points": 120,
+    "start_time": null,
+    "end_time": null,
+    "area_cm2": 1.0,
+    "reference_electrode": "Ag/AgCl",
+    "average_potential_V": -1.1567863916666667,
+    "potential_std_V": 0.07205274587542286,
+    "potential_min_V": -1.232231,
+    "potential_max_V": -1.060157,
+    "potential_n": 120,
+    "average_potential_by_kind_V": {
+      "第1電流": -1.0851115,
+      "第2電流": -1.2284612833333335
+    },
+    "resistance_error": "インピーダンスの列が見つかりません: ['re_z', 'im_z'] （列: ['1 時間t', '2 電位E', '3 電流I', '4 WE/CE', '種別']）"
+  }
+]

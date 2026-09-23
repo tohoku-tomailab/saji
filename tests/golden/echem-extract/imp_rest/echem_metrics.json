@@ -1,0 +1,22 @@
+[
+  {
+    "file": "imp_synth.CSV",
+    "item_code": "0x051c",
+    "item_name": "IMP／定電位 定電位交流ｲﾝﾋﾟｰﾀﾞﾝｽ測定",
+    "kind": "IMP",
+    "phase_code": "0x0601",
+    "phase_name": "自然電位測定",
+    "cycle": 1,
+    "n_points": 3,
+    "start_time": "2026-01-01 11:00:00",
+    "end_time": "2026-01-01 11:00:03",
+    "area_cm2": 0.5,
+    "reference_electrode": "Ag/AgCl",
+    "average_potential_V": -0.6998000000000001,
+    "potential_std_V": 8.164965809276361e-05,
+    "potential_min_V": -0.6999,
+    "potential_max_V": -0.6997,
+    "potential_n": 3,
+    "resistance_error": "インピーダンスの列が見つかりません: ['re_z', 'im_z'] （列: ['1 時間t', '2 電位E', '22 自然電位']）"
+  }
+]

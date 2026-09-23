@@ -1,0 +1,31 @@
+[
+  {
+    "file": "imp_synth.CSV",
+    "item_code": "0x051c",
+    "item_name": "IMP／定電位 定電位交流ｲﾝﾋﾟｰﾀﾞﾝｽ測定",
+    "kind": "IMP",
+    "phase_code": "0x0600",
+    "phase_name": "本測定",
+    "cycle": 1,
+    "n_points": 61,
+    "start_time": "2026-01-01 11:00:03",
+    "end_time": "2026-01-01 11:10:00",
+    "area_cm2": 0.5,
+    "reference_electrode": "Ag/AgCl",
+    "average_potential_V": -0.699959142622951,
+    "potential_std_V": 0.00021064188198356384,
+    "potential_min_V": -0.7004649,
+    "potential_max_V": -0.6995812,
+    "potential_n": 61,
+    "solution_resistance_ohm": 52.264232136587445,
+    "resistance_method": "interp",
+    "crossing_index": 7,
+    "n_crossings": 8,
+    "crossing_freq_before_hz": 0.1258925,
+    "crossing_freq_after_hz": 0.1,
+    "crossing_re_z_before_ohm": 52.24231,
+    "crossing_re_z_after_ohm": 52.28183,
+    "crossing_im_z_before_ohm": -0.01606638,
+    "crossing_im_z_after_ohm": 0.01289719
+  }
+]

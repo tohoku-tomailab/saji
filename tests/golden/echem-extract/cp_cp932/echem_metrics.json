@@ -1,0 +1,48 @@
+[
+  {
+    "file": "cp_synth.CSV",
+    "item_code": "0x0506",
+    "item_name": "CP ｸﾛﾉﾎﾟﾃﾝｼｮﾒﾄﾘ",
+    "kind": "CP",
+    "phase_code": "0x0600",
+    "phase_name": "本測定",
+    "cycle": 1,
+    "n_points": 120,
+    "start_time": "2026-01-01 10:00:10",
+    "end_time": "2026-01-01 10:02:10",
+    "area_cm2": 1.0,
+    "reference_electrode": "Ag/AgCl",
+    "average_potential_V": -1.0670927333333333,
+    "potential_std_V": 0.00793743941051242,
+    "potential_min_V": -1.077936,
+    "potential_max_V": -1.049219,
+    "potential_n": 30,
+    "potential_time_range": [
+      null,
+      30.0
+    ]
+  },
+  {
+    "file": "cp_synth.CSV",
+    "item_code": "0x0506",
+    "item_name": "CP ｸﾛﾉﾎﾟﾃﾝｼｮﾒﾄﾘ",
+    "kind": "CP",
+    "phase_code": "0x0600",
+    "phase_name": "本測定",
+    "cycle": 2,
+    "n_points": 120,
+    "start_time": null,
+    "end_time": null,
+    "area_cm2": 1.0,
+    "reference_electrode": "Ag/AgCl",
+    "average_potential_V": -1.0771365333333336,
+    "potential_std_V": 0.008624984779632316,
+    "potential_min_V": -1.09067,
+    "potential_max_V": -1.060157,
+    "potential_n": 30,
+    "potential_time_range": [
+      null,
+      30.0
+    ]
+  }
+]
