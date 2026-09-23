@@ -497,8 +497,13 @@ class _Renderer:
             return
         L, B, PW, PH = self.box
         x = float(title.get("x", 0.5)) if isinstance(title, dict) else 0.5
-        self.mfig.text(L + PW * x, B + PH + 12 / self.H, html_to_mathtext(text),
-                       ha="center", va="bottom",
+        y = B + PH + 12 / self.H
+        sub = title.get("subtitle") if isinstance(title, dict) else None
+        if isinstance(sub, dict) and sub.get("text"):
+            t = self.mfig.text(L + PW * x, y, html_to_mathtext(sub["text"]), ha="center", va="bottom",
+                               **self._font_kw(sub.get("font"), self.base_font))
+            y += (t.get_fontsize() / 72 * 1.5) / self.mfig.get_size_inches()[1]
+        self.mfig.text(L + PW * x, y, html_to_mathtext(text), ha="center", va="bottom",
                        **self._font_kw(title.get("font") if isinstance(title, dict) else None,
                                        self.base_font))
 

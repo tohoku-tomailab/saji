@@ -43,6 +43,7 @@ class Param:
     type: Any = str
     default: Any = None
     help: str = ""
+    label: str = ""          # Web のフォームに出す表示名（空なら name）
     unit: str | None = None
     choices: tuple[str, ...] | None = None
     min: float | None = None
@@ -125,7 +126,7 @@ class Param:
     def to_dict(self) -> dict[str, Any]:
         return {
             "name": self.name, "type": self.type, "default": self.default,
-            "help": self.help, "unit": self.unit,
+            "help": self.help, "label": self.label or self.name, "unit": self.unit,
             "choices": list(self.choices) if self.choices else None,
             "min": self.min, "max": self.max,
             "group": self.group, "advanced": self.advanced,

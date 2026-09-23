@@ -307,8 +307,7 @@ def process_figure(res: dict, st: dict, *, title: str, peaks=None, show_raw=True
     normed = res["norm_method"] != "none"
     sub = (f"bg={res['bg_method']} {res['bg_kwargs']}  smooth={res['smooth_method']} "
            f"{res['smooth_kwargs']}  norm={res['norm_method']} {res['norm_kwargs']}")
-    fig = new_figure(st, title=f"{title}<br><span style='font-size:{st['legend']}px'>{sub}</span>",
-                     legend="inside")
+    fig = new_figure(st, title=title, subtitle=sub, legend="inside")
     left: list[np.ndarray] = []
     raw_color, bg_color = "#b0c4de", "#ffa500"   # lightsteelblue / orange
 

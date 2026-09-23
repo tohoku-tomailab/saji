@@ -29,10 +29,12 @@ SYMBOLS = ("circle", "square", "diamond", "triangle-up", "triangle-down", "cross
 
 
 # ============================================================ 図と軸
-def new_figure(st: dict, *, title: str | None = None, width: float | None = None,
-               height: float | None = None, legend: str = "outside") -> Fig:
+def new_figure(st: dict, *, title: str | None = None, subtitle: str | None = None,
+               width: float | None = None, height: float | None = None,
+               legend: str = "outside") -> Fig:
     """白背景・Arial 太字・枠線ありの空の図を作る。
 
+    subtitle はタイトルの下に小さく出す（処理条件など）。
     legend: "outside"（軸の右外。既定）/ "inside"（軸内の右上）/ "none"（出さない）。
     """
     layout: dict[str, Any] = {
@@ -42,7 +44,7 @@ def new_figure(st: dict, *, title: str | None = None, width: float | None = None
         "paper_bgcolor": BACKGROUND,
         "font": font(st["font"]),
         "colorway": list(SERIES_COLORS),
-        "margin": {"l": 90, "r": 30, "t": 80 if title else 30, "b": 80},
+        "margin": {"l": 90, "r": 30, "t": (100 if subtitle else 70) if title else 30, "b": 80},
         "showlegend": legend != "none",
         "legend": _legend(st, legend),
         "shapes": [],
@@ -50,6 +52,8 @@ def new_figure(st: dict, *, title: str | None = None, width: float | None = None
     }
     if title:
         layout["title"] = {"text": title, "font": font(st["title"]), "x": 0.5, "xanchor": "center"}
+        if subtitle:
+            layout["title"]["subtitle"] = {"text": subtitle, "font": font(st["tick"] * 0.8)}
     return {"data": [], "layout": layout}
 
 
@@ -107,6 +111,8 @@ def set_axis(fig: Fig, key: str, st: dict, *, title: str | None = None,
     if anchor:
         axis["anchor"] = anchor
     if overlaying:
+        # 第2軸の目盛は自分の範囲で決める（Plotly の既定 "sync" だと半端な値になる）
+        axis["tickmode"] = "auto"
         axis["overlaying"] = overlaying
         axis["side"] = side or "right"
     elif side:

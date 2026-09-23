@@ -40,7 +40,7 @@ SERIES_COLORS = [
 
 # 図を出すツールが共通で持つパラメータ（ツール定義の params に入れて使う）。
 STYLE_PARAM = Param(
-    "style", choices=tuple(STYLES), default=DEFAULT_STYLE, group="図",
+    "style", label="文字の大きさ", choices=tuple(STYLES), default=DEFAULT_STYLE, group="図",
     help="文字・線の大きさのプリセット（paper=論文 / slide=スライド / poster=ポスター）",
 )
 

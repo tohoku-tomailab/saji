@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>saji（さじ）</title>
+  <meta name="description" content="研究室の実験データ処理ツール。データはこのブラウザの外に送信されません。">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cellipse cx='11' cy='11' rx='8' ry='6' fill='%23b7791f'/%3E%3Crect x='16' y='14' width='14' height='4' rx='2' transform='rotate(40 16 14)' fill='%23b7791f'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <!-- Plotly.js は版を固定する（docs/maintenance.md）。解析タグ等は入れない。 -->
+  <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@4.1.1/plotly.min.js" defer></script>
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-name">saji</span>
+      <span class="brand-sub">実験データ処理</span>
+    </div>
+    <div id="engine" class="engine" data-state="loading" role="status" aria-live="polite">
+      <span class="dot" aria-hidden="true"></span><span id="engine-text">準備中…</span>
+    </div>
+  </header>
+
+  <p class="privacy">
+    <strong>データはこのブラウザの外に送信されません。</strong>
+    処理はすべてこのページの中の Python で行います（最初に Python 本体を読み込むときだけ通信します）。
+  </p>
+
+  <div class="layout">
+    <nav class="toollist" aria-label="ツール">
+      <label class="toolselect-label" for="toolselect">ツール</label>
+      <select id="toolselect" class="toolselect"></select>
+      <ul id="tools"></ul>
+    </nav>
+
+    <main id="main">
+      <section id="welcome" class="card">
+        <h1>ツールを選んでください</h1>
+        <p>左の一覧からツールを選ぶと、入力ファイルとパラメータの欄が出ます。</p>
+      </section>
+
+      <section id="tool" class="card" hidden>
+        <header class="tool-head">
+          <h1 id="tool-name"></h1>
+          <p id="tool-summary" class="summary"></p>
+          <details id="tool-desc-wrap" class="desc"><summary>説明</summary><p id="tool-desc"></p></details>
+        </header>
+
+        <div id="cli-only" class="notice" hidden></div>
+
+        <form id="form" novalidate>
+          <div id="inputs"></div>
+          <div id="params"></div>
+          <div class="actions">
+            <button id="run" type="submit" class="primary">実行</button>
+            <span id="run-hint" class="hint"></span>
+          </div>
+        </form>
+      </section>
+
+      <section id="result" class="card" hidden aria-live="polite">
+        <header class="result-head">
+          <h2>結果</h2>
+          <button id="download" type="button" class="primary" hidden>zip をダウンロード</button>
+        </header>
+        <div id="messages"></div>
+        <div id="previews"></div>
+        <details class="files"><summary>出力ファイル</summary><ul id="files"></ul></details>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <span id="version"></span>
+    <span>CLI: <code>saji &lt;tool&gt; --help</code></span>
+  </footer>
+</body>
+</html>

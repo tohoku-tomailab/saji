@@ -20,6 +20,9 @@ def iter_texts(fig: dict[str, Any]) -> Iterator[str]:
     title = layout.get("title")
     if isinstance(title, dict):
         yield str(title.get("text") or "")
+        sub = title.get("subtitle")
+        if isinstance(sub, dict):
+            yield str(sub.get("text") or "")
     for key, axis in layout.items():
         if (key.startswith("xaxis") or key.startswith("yaxis")) and isinstance(axis, dict):
             t = axis.get("title")
