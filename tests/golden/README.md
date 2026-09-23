@@ -22,3 +22,7 @@
   `xrd-overlay/make_golden.py`（kaiseki-tool の環境で実行する）。ケースの入力とパラメータも JSON に入っている。
 - `figures/*.json` … 図の JSON のスナップショット。意図して図を変えたときだけ
   `SAJI_UPDATE_SNAPSHOTS=1 uv run pytest` で作り直す。
+- `xps-extract/*.csv` … kaiseki-tool v0.2.0 の `kaiseki xps extract` の出力（csv モジュールの既定どおり CRLF のまま）。
+  ケースは `tests/test_xps_extract.py` の `CASES`。
+- `xps-plot/*.json` / `xps-fit/*.json` … kaiseki-tool の `prepare_traces` / `prepare_fit_traces` /
+  `_prepare_overlay` が出す数値（`tests/fixtures/xps/kaiseki_golden.py` を kaiseki-tool の環境で実行して作る）。
