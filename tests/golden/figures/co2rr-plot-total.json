@@ -1,0 +1,547 @@
+{
+ "data": [
+  {
+   "type": "bar",
+   "name": "H<sub>2</sub>",
+   "x": [
+    "catC",
+    "catA",
+    "catB"
+   ],
+   "y": [
+    30.0,
+    19.0,
+    33.5
+   ],
+   "xaxis": "x",
+   "yaxis": "y",
+   "showlegend": true,
+   "marker": {
+    "line": {
+     "color": "#000000",
+     "width": 1
+    },
+    "color": "#bfbfbf"
+   },
+   "width": 0.6,
+   "text": [
+    "30.0",
+    "19.0",
+    "33.5"
+   ],
+   "textposition": "inside",
+   "insidetextanchor": "middle",
+   "textfont": {
+    "family": "Arial",
+    "weight": "bold",
+    "color": "#222222",
+    "size": 16
+   },
+   "hovertemplate": "%{x}: %{y:.2f} %<extra>%{fullData.name}</extra>"
+  },
+  {
+   "type": "bar",
+   "name": "CO",
+   "x": [
+    "catC",
+    "catA",
+    "catB"
+   ],
+   "y": [
+    0.0,
+    38.0,
+    23.0
+   ],
+   "xaxis": "x",
+   "yaxis": "y",
+   "showlegend": true,
+   "marker": {
+    "line": {
+     "color": "#000000",
+     "width": 1
+    },
+    "color": "#ffd400"
+   },
+   "width": 0.6,
+   "text": [
+    "",
+    "38.0",
+    "23.0"
+   ],
+   "textposition": "inside",
+   "insidetextanchor": "middle",
+   "textfont": {
+    "family": "Arial",
+    "weight": "bold",
+    "color": "#222222",
+    "size": 16
+   },
+   "hovertemplate": "%{x}: %{y:.2f} %<extra>%{fullData.name}</extra>"
+  },
+  {
+   "type": "bar",
+   "name": "CH<sub>4</sub>",
+   "x": [
+    "catC",
+    "catA",
+    "catB"
+   ],
+   "y": [
+    20.0,
+    9.0,
+    23.5
+   ],
+   "xaxis": "x",
+   "yaxis": "y",
+   "showlegend": true,
+   "marker": {
+    "line": {
+     "color": "#000000",
+     "width": 1
+    },
+    "color": "#e8000b"
+   },
+   "width": 0.6,
+   "text": [
+    "20.0",
+    "9.0",
+    "23.5"
+   ],
+   "textposition": "inside",
+   "insidetextanchor": "middle",
+   "textfont": {
+    "family": "Arial",
+    "weight": "bold",
+    "color": "#222222",
+    "size": 16
+   },
+   "hovertemplate": "%{x}: %{y:.2f} %<extra>%{fullData.name}</extra>"
+  },
+  {
+   "type": "bar",
+   "name": "C<sub>2</sub>H<sub>4</sub>",
+   "x": [
+    "catC",
+    "catA",
+    "catB"
+   ],
+   "y": [
+    15.0,
+    28.5,
+    13.0
+   ],
+   "xaxis": "x",
+   "yaxis": "y",
+   "showlegend": true,
+   "marker": {
+    "line": {
+     "color": "#000000",
+     "width": 1
+    },
+    "color": "#8000ff"
+   },
+   "width": 0.6,
+   "text": [
+    "15.0",
+    "28.5",
+    "13.0"
+   ],
+   "textposition": "inside",
+   "insidetextanchor": "middle",
+   "textfont": {
+    "family": "Arial",
+    "weight": "bold",
+    "color": "#222222",
+    "size": 16
+   },
+   "hovertemplate": "%{x}: %{y:.2f} %<extra>%{fullData.name}</extra>"
+  },
+  {
+   "type": "bar",
+   "name": "CH<sub>3</sub>COOH",
+   "x": [
+    "catC",
+    "catA",
+    "catB"
+   ],
+   "y": [
+    0.0,
+    6.5,
+    6.8
+   ],
+   "xaxis": "x",
+   "yaxis": "y",
+   "showlegend": true,
+   "marker": {
+    "line": {
+     "color": "#000000",
+     "width": 1
+    },
+    "color": "#8b0000"
+   },
+   "width": 0.6,
+   "text": [
+    "",
+    "6.5",
+    "6.8"
+   ],
+   "textposition": "inside",
+   "insidetextanchor": "middle",
+   "textfont": {
+    "family": "Arial",
+    "weight": "bold",
+    "color": "#222222",
+    "size": 16
+   },
+   "hovertemplate": "%{x}: %{y:.2f} %<extra>%{fullData.name}</extra>"
+  },
+  {
+   "type": "bar",
+   "name": "1-PrOH",
+   "x": [
+    "catC",
+    "catA",
+    "catB"
+   ],
+   "y": [
+    0.0,
+    0.7,
+    0.4
+   ],
+   "xaxis": "x",
+   "yaxis": "y",
+   "showlegend": true,
+   "marker": {
+    "line": {
+     "color": "#000000",
+     "width": 1
+    },
+    "color": "#00008b"
+   },
+   "width": 0.6,
+   "text": [
+    "",
+    "",
+    ""
+   ],
+   "textposition": "inside",
+   "insidetextanchor": "middle",
+   "textfont": {
+    "family": "Arial",
+    "weight": "bold",
+    "color": "#222222",
+    "size": 16
+   },
+   "hovertemplate": "%{x}: %{y:.2f} %<extra>%{fullData.name}</extra>"
+  },
+  {
+   "type": "bar",
+   "name": "EtOH",
+   "x": [
+    "catC",
+    "catA",
+    "catB"
+   ],
+   "y": [
+    0.0,
+    9.0,
+    7.5
+   ],
+   "xaxis": "x",
+   "yaxis": "y",
+   "showlegend": true,
+   "marker": {
+    "line": {
+     "color": "#000000",
+     "width": 1
+    },
+    "color": "#00c000"
+   },
+   "width": 0.6,
+   "text": [
+    "",
+    "9.0",
+    "7.5"
+   ],
+   "textposition": "inside",
+   "insidetextanchor": "middle",
+   "textfont": {
+    "family": "Arial",
+    "weight": "bold",
+    "color": "#222222",
+    "size": 16
+   },
+   "hovertemplate": "%{x}: %{y:.2f} %<extra>%{fullData.name}</extra>"
+  },
+  {
+   "type": "bar",
+   "name": "HCOOH",
+   "x": [
+    "catC",
+    "catA",
+    "catB"
+   ],
+   "y": [
+    0.0,
+    3.5,
+    4.6
+   ],
+   "xaxis": "x",
+   "yaxis": "y",
+   "showlegend": true,
+   "marker": {
+    "line": {
+     "color": "#000000",
+     "width": 1
+    },
+    "color": "#00d5ff"
+   },
+   "width": 0.6,
+   "text": [
+    "",
+    "3.5",
+    "4.6"
+   ],
+   "textposition": "inside",
+   "insidetextanchor": "middle",
+   "textfont": {
+    "family": "Arial",
+    "weight": "bold",
+    "color": "#222222",
+    "size": 16
+   },
+   "hovertemplate": "%{x}: %{y:.2f} %<extra>%{fullData.name}</extra>"
+  },
+  {
+   "type": "bar",
+   "name": "Total error",
+   "x": [
+    "catC",
+    "catA",
+    "catB"
+   ],
+   "y": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "xaxis": "x",
+   "yaxis": "y",
+   "showlegend": false,
+   "marker": {
+    "line": {
+     "color": "#000000",
+     "width": 0
+    }
+   },
+   "width": 0.6,
+   "error_y": {
+    "type": "data",
+    "array": [
+     0.0,
+     4.06201920231798,
+     11.357816691600547
+    ],
+    "visible": true,
+    "color": "#000000",
+    "thickness": 2.0,
+    "width": 5
+   }
+  },
+  {
+   "type": "scatter",
+   "mode": "lines+markers",
+   "name": "Potential / V",
+   "x": [
+    "catC",
+    "catA",
+    "catB"
+   ],
+   "y": [
+    -1.4,
+    -1.58,
+    null
+   ],
+   "xaxis": "x",
+   "yaxis": "y2",
+   "showlegend": false,
+   "hovertemplate": "%{x}: %{y:.3f} V<extra>%{fullData.name}</extra>",
+   "line": {
+    "width": 2.6,
+    "dash": "solid",
+    "color": "#ff7f0e"
+   },
+   "marker": {
+    "symbol": "square",
+    "size": 9,
+    "color": "#ff7f0e",
+    "line": {
+     "color": "#000000",
+     "width": 0.5
+    }
+   },
+   "error_y": {
+    "type": "data",
+    "array": [
+     0.0,
+     0.11313708498984755,
+     0.0
+    ],
+    "visible": true,
+    "color": "#ff7f0e",
+    "thickness": 2.0,
+    "width": 5
+   }
+  }
+ ],
+ "layout": {
+  "width": 1000,
+  "height": 620,
+  "plot_bgcolor": "#ffffff",
+  "paper_bgcolor": "#ffffff",
+  "font": {
+   "family": "Arial",
+   "size": 18,
+   "color": "#222222",
+   "weight": "bold"
+  },
+  "colorway": [
+   "#111111",
+   "#ff1e1e",
+   "#00a82a",
+   "#1e33ff",
+   "#00b8c8",
+   "#9b34eb",
+   "#ff7eb6",
+   "#e0a000",
+   "#7a6a00",
+   "#8b4513"
+  ],
+  "margin": {
+   "l": 90,
+   "r": 30,
+   "t": 70,
+   "b": 80
+  },
+  "showlegend": true,
+  "legend": {
+   "font": {
+    "family": "Arial",
+    "size": 17,
+    "color": "#222222",
+    "weight": "bold"
+   },
+   "bgcolor": "rgba(255,255,255,0)",
+   "x": 1.14,
+   "y": 0.5,
+   "xanchor": "left",
+   "yanchor": "middle",
+   "traceorder": "reversed"
+  },
+  "shapes": [],
+  "annotations": [],
+  "title": {
+   "text": "Total error",
+   "font": {
+    "family": "Arial",
+    "size": 20,
+    "color": "#222222",
+    "weight": "bold"
+   },
+   "x": 0.5,
+   "xanchor": "center"
+  },
+  "barmode": "stack",
+  "xaxis": {
+   "showgrid": false,
+   "zeroline": false,
+   "showline": true,
+   "linecolor": "#222222",
+   "linewidth": 2.0,
+   "mirror": true,
+   "ticks": "inside",
+   "tickwidth": 2.0,
+   "tickcolor": "#222222",
+   "ticklen": 8,
+   "tickfont": {
+    "family": "Arial",
+    "size": 18,
+    "color": "#222222",
+    "weight": "bold"
+   },
+   "showticklabels": true,
+   "automargin": true,
+   "title": {
+    "text": "Catalyst",
+    "font": {
+     "family": "Arial",
+     "size": 22,
+     "color": "#222222",
+     "weight": "bold"
+    }
+   },
+   "type": "category"
+  },
+  "yaxis": {
+   "showgrid": false,
+   "zeroline": false,
+   "showline": true,
+   "linecolor": "#222222",
+   "linewidth": 2.0,
+   "mirror": false,
+   "ticks": "inside",
+   "tickwidth": 2.0,
+   "tickcolor": "#222222",
+   "ticklen": 8,
+   "tickfont": {
+    "family": "Arial",
+    "size": 18,
+    "color": "#222222",
+    "weight": "bold"
+   },
+   "showticklabels": true,
+   "automargin": true,
+   "title": {
+    "text": "Faradaic efficiency / %",
+    "font": {
+     "family": "Arial",
+     "size": 22,
+     "color": "#222222",
+     "weight": "bold"
+    }
+   }
+  },
+  "yaxis2": {
+   "showgrid": false,
+   "zeroline": false,
+   "showline": true,
+   "linecolor": "#222222",
+   "linewidth": 2.0,
+   "mirror": false,
+   "ticks": "inside",
+   "tickwidth": 2.0,
+   "tickcolor": "#222222",
+   "ticklen": 8,
+   "tickfont": {
+    "family": "Arial",
+    "size": 18,
+    "color": "#222222",
+    "weight": "bold"
+   },
+   "showticklabels": true,
+   "automargin": true,
+   "title": {
+    "text": "Potential / V",
+    "font": {
+     "family": "Arial",
+     "size": 22,
+     "color": "#222222",
+     "weight": "bold"
+    }
+   },
+   "tickmode": "auto",
+   "overlaying": "y",
+   "side": "right"
+  }
+ }
+}

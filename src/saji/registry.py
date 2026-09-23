@@ -13,6 +13,7 @@ from typing import Any
 TOOL_MODULES = [
     "xrd_process",
     "xrd_overlay",
+    "co2rr_plot",
 ]
 
 

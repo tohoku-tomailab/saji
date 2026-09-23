@@ -1,0 +1,592 @@
+{
+ "data": [
+  {
+   "type": "bar",
+   "name": "H<sub>2</sub>",
+   "x": [
+    "pH7",
+    "pH9",
+    "pH11"
+   ],
+   "y": [
+    20.833333333333332,
+    33.85,
+    33.3
+   ],
+   "xaxis": "x",
+   "yaxis": "y",
+   "showlegend": true,
+   "marker": {
+    "line": {
+     "color": "#000000",
+     "width": 1
+    },
+    "color": "#bfbfbf"
+   },
+   "width": 0.6,
+   "error_y": {
+    "type": "data",
+    "array": [
+     2.354428451521375,
+     6.1518289963229655,
+     2.4041630560342604
+    ],
+    "visible": true,
+    "color": "#000000",
+    "thickness": 2.0,
+    "width": 5
+   },
+   "text": [
+    "20.8",
+    "33.9",
+    "33.3"
+   ],
+   "textposition": "inside",
+   "insidetextanchor": "middle",
+   "textfont": {
+    "family": "Arial",
+    "weight": "bold",
+    "color": "#222222",
+    "size": 16
+   },
+   "hovertemplate": "%{x}: %{y:.2f} %<extra>%{fullData.name}</extra>"
+  },
+  {
+   "type": "bar",
+   "name": "CO",
+   "x": [
+    "pH7",
+    "pH9",
+    "pH11"
+   ],
+   "y": [
+    37.800000000000004,
+    22.3,
+    21.6
+   ],
+   "xaxis": "x",
+   "yaxis": "y",
+   "showlegend": true,
+   "marker": {
+    "line": {
+     "color": "#000000",
+     "width": 1
+    },
+    "color": "#ffd400"
+   },
+   "width": 0.6,
+   "error_y": {
+    "type": "data",
+    "array": [
+     1.3527749258468695,
+     5.23259018078045,
+     1.8384776310850222
+    ],
+    "visible": true,
+    "color": "#000000",
+    "thickness": 2.0,
+    "width": 5
+   },
+   "text": [
+    "37.8",
+    "22.3",
+    "21.6"
+   ],
+   "textposition": "inside",
+   "insidetextanchor": "middle",
+   "textfont": {
+    "family": "Arial",
+    "weight": "bold",
+    "color": "#222222",
+    "size": 16
+   },
+   "hovertemplate": "%{x}: %{y:.2f} %<extra>%{fullData.name}</extra>"
+  },
+  {
+   "type": "bar",
+   "name": "CH<sub>4</sub>",
+   "x": [
+    "pH7",
+    "pH9",
+    "pH11"
+   ],
+   "y": [
+    9.4,
+    23.049999999999997,
+    16.65
+   ],
+   "xaxis": "x",
+   "yaxis": "y",
+   "showlegend": true,
+   "marker": {
+    "line": {
+     "color": "#000000",
+     "width": 1
+    },
+    "color": "#e8000b"
+   },
+   "width": 0.6,
+   "error_y": {
+    "type": "data",
+    "array": [
+     1.5716233645501705,
+     2.333452377915607,
+     1.6263455967290597
+    ],
+    "visible": true,
+    "color": "#000000",
+    "thickness": 2.0,
+    "width": 5
+   },
+   "text": [
+    "9.4",
+    "23.0",
+    "16.6"
+   ],
+   "textposition": "inside",
+   "insidetextanchor": "middle",
+   "textfont": {
+    "family": "Arial",
+    "weight": "bold",
+    "color": "#222222",
+    "size": 16
+   },
+   "hovertemplate": "%{x}: %{y:.2f} %<extra>%{fullData.name}</extra>"
+  },
+  {
+   "type": "bar",
+   "name": "C<sub>2</sub>H<sub>4</sub>",
+   "x": [
+    "pH7",
+    "pH9",
+    "pH11"
+   ],
+   "y": [
+    26.5,
+    13.149999999999999,
+    12.85
+   ],
+   "xaxis": "x",
+   "yaxis": "y",
+   "showlegend": true,
+   "marker": {
+    "line": {
+     "color": "#000000",
+     "width": 1
+    },
+    "color": "#8000ff"
+   },
+   "width": 0.6,
+   "error_y": {
+    "type": "data",
+    "array": [
+     3.567912554982255,
+     5.303300858899105,
+     0.9192388155425123
+    ],
+    "visible": true,
+    "color": "#000000",
+    "thickness": 2.0,
+    "width": 5
+   },
+   "text": [
+    "26.5",
+    "13.1",
+    "12.8"
+   ],
+   "textposition": "inside",
+   "insidetextanchor": "middle",
+   "textfont": {
+    "family": "Arial",
+    "weight": "bold",
+    "color": "#222222",
+    "size": 16
+   },
+   "hovertemplate": "%{x}: %{y:.2f} %<extra>%{fullData.name}</extra>"
+  },
+  {
+   "type": "bar",
+   "name": "CH<sub>3</sub>COOH",
+   "x": [
+    "pH7",
+    "pH9",
+    "pH11"
+   ],
+   "y": [
+    5.8999999999999995,
+    4.65,
+    5.15
+   ],
+   "xaxis": "x",
+   "yaxis": "y",
+   "showlegend": true,
+   "marker": {
+    "line": {
+     "color": "#000000",
+     "width": 1
+    },
+    "color": "#8b0000"
+   },
+   "width": 0.6,
+   "error_y": {
+    "type": "data",
+    "array": [
+     0.6244997998398398,
+     2.757716446627535,
+     0.4949747468305834
+    ],
+    "visible": true,
+    "color": "#000000",
+    "thickness": 2.0,
+    "width": 5
+   },
+   "text": [
+    "5.9",
+    "4.7",
+    "5.2"
+   ],
+   "textposition": "inside",
+   "insidetextanchor": "middle",
+   "textfont": {
+    "family": "Arial",
+    "weight": "bold",
+    "color": "#222222",
+    "size": 16
+   },
+   "hovertemplate": "%{x}: %{y:.2f} %<extra>%{fullData.name}</extra>"
+  },
+  {
+   "type": "bar",
+   "name": "1-PrOH",
+   "x": [
+    "pH7",
+    "pH9",
+    "pH11"
+   ],
+   "y": [
+    0.7333333333333333,
+    0.4,
+    1.1
+   ],
+   "xaxis": "x",
+   "yaxis": "y",
+   "showlegend": true,
+   "marker": {
+    "line": {
+     "color": "#000000",
+     "width": 1
+    },
+    "color": "#00008b"
+   },
+   "width": 0.6,
+   "error_y": {
+    "type": "data",
+    "array": [
+     0.1527525231651947,
+     0.14142135623730953,
+     0.14142135623730948
+    ],
+    "visible": true,
+    "color": "#000000",
+    "thickness": 2.0,
+    "width": 5
+   },
+   "text": [
+    "",
+    "",
+    ""
+   ],
+   "textposition": "inside",
+   "insidetextanchor": "middle",
+   "textfont": {
+    "family": "Arial",
+    "weight": "bold",
+    "color": "#222222",
+    "size": 16
+   },
+   "hovertemplate": "%{x}: %{y:.2f} %<extra>%{fullData.name}</extra>"
+  },
+  {
+   "type": "bar",
+   "name": "EtOH",
+   "x": [
+    "pH7",
+    "pH9",
+    "pH11"
+   ],
+   "y": [
+    8.133333333333333,
+    5.65,
+    6.1
+   ],
+   "xaxis": "x",
+   "yaxis": "y",
+   "showlegend": true,
+   "marker": {
+    "line": {
+     "color": "#000000",
+     "width": 1
+    },
+    "color": "#00c000"
+   },
+   "width": 0.6,
+   "error_y": {
+    "type": "data",
+    "array": [
+     0.6506407098647715,
+     2.192031021678298,
+     0.2828427124746186
+    ],
+    "visible": true,
+    "color": "#000000",
+    "thickness": 2.0,
+    "width": 5
+   },
+   "text": [
+    "8.1",
+    "5.7",
+    "6.1"
+   ],
+   "textposition": "inside",
+   "insidetextanchor": "middle",
+   "textfont": {
+    "family": "Arial",
+    "weight": "bold",
+    "color": "#222222",
+    "size": 16
+   },
+   "hovertemplate": "%{x}: %{y:.2f} %<extra>%{fullData.name}</extra>"
+  },
+  {
+   "type": "bar",
+   "name": "HCOOH",
+   "x": [
+    "pH7",
+    "pH9",
+    "pH11"
+   ],
+   "y": [
+    2.966666666666667,
+    4.1,
+    4.9
+   ],
+   "xaxis": "x",
+   "yaxis": "y",
+   "showlegend": true,
+   "marker": {
+    "line": {
+     "color": "#000000",
+     "width": 1
+    },
+    "color": "#00d5ff"
+   },
+   "width": 0.6,
+   "error_y": {
+    "type": "data",
+    "array": [
+     0.40414518843273795,
+     0.4242640687119289,
+     0.2828427124746186
+    ],
+    "visible": true,
+    "color": "#000000",
+    "thickness": 2.0,
+    "width": 5
+   },
+   "text": [
+    "",
+    "4.1",
+    "4.9"
+   ],
+   "textposition": "inside",
+   "insidetextanchor": "middle",
+   "textfont": {
+    "family": "Arial",
+    "weight": "bold",
+    "color": "#222222",
+    "size": 16
+   },
+   "hovertemplate": "%{x}: %{y:.2f} %<extra>%{fullData.name}</extra>"
+  },
+  {
+   "type": "scatter",
+   "mode": "lines+markers",
+   "name": "Potential / V",
+   "x": [
+    "pH7",
+    "pH9",
+    "pH11"
+   ],
+   "y": [
+    -1.63,
+    -1.755,
+    -1.625
+   ],
+   "xaxis": "x",
+   "yaxis": "y2",
+   "showlegend": false,
+   "hovertemplate": "%{x}: %{y:.3f} V<extra>%{fullData.name}</extra>",
+   "line": {
+    "width": 2.6,
+    "dash": "solid",
+    "color": "#ff7f0e"
+   },
+   "marker": {
+    "symbol": "square",
+    "size": 9,
+    "color": "#ff7f0e",
+    "line": {
+     "color": "#000000",
+     "width": 0.5
+    }
+   },
+   "error_y": {
+    "type": "data",
+    "array": [
+     0.098488578017961,
+     0.10606601717798222,
+     0.021213203435596288
+    ],
+    "visible": true,
+    "color": "#ff7f0e",
+    "thickness": 2.0,
+    "width": 5
+   }
+  }
+ ],
+ "layout": {
+  "width": 1000,
+  "height": 620,
+  "plot_bgcolor": "#ffffff",
+  "paper_bgcolor": "#ffffff",
+  "font": {
+   "family": "Arial",
+   "size": 18,
+   "color": "#222222",
+   "weight": "bold"
+  },
+  "colorway": [
+   "#111111",
+   "#ff1e1e",
+   "#00a82a",
+   "#1e33ff",
+   "#00b8c8",
+   "#9b34eb",
+   "#ff7eb6",
+   "#e0a000",
+   "#7a6a00",
+   "#8b4513"
+  ],
+  "margin": {
+   "l": 90,
+   "r": 30,
+   "t": 30,
+   "b": 80
+  },
+  "showlegend": true,
+  "legend": {
+   "font": {
+    "family": "Arial",
+    "size": 17,
+    "color": "#222222",
+    "weight": "bold"
+   },
+   "bgcolor": "rgba(255,255,255,0)",
+   "x": 1.14,
+   "y": 0.5,
+   "xanchor": "left",
+   "yanchor": "middle",
+   "traceorder": "reversed"
+  },
+  "shapes": [],
+  "annotations": [],
+  "barmode": "stack",
+  "xaxis": {
+   "showgrid": false,
+   "zeroline": false,
+   "showline": true,
+   "linecolor": "#222222",
+   "linewidth": 2.0,
+   "mirror": true,
+   "ticks": "inside",
+   "tickwidth": 2.0,
+   "tickcolor": "#222222",
+   "ticklen": 8,
+   "tickfont": {
+    "family": "Arial",
+    "size": 18,
+    "color": "#222222",
+    "weight": "bold"
+   },
+   "showticklabels": true,
+   "automargin": true,
+   "type": "category"
+  },
+  "yaxis": {
+   "showgrid": false,
+   "zeroline": false,
+   "showline": true,
+   "linecolor": "#222222",
+   "linewidth": 2.0,
+   "mirror": false,
+   "ticks": "inside",
+   "tickwidth": 2.0,
+   "tickcolor": "#222222",
+   "ticklen": 8,
+   "tickfont": {
+    "family": "Arial",
+    "size": 18,
+    "color": "#222222",
+    "weight": "bold"
+   },
+   "showticklabels": true,
+   "automargin": true,
+   "title": {
+    "text": "Faradaic efficiency / %",
+    "font": {
+     "family": "Arial",
+     "size": 22,
+     "color": "#222222",
+     "weight": "bold"
+    }
+   }
+  },
+  "yaxis2": {
+   "showgrid": false,
+   "zeroline": false,
+   "showline": true,
+   "linecolor": "#222222",
+   "linewidth": 2.0,
+   "mirror": false,
+   "ticks": "inside",
+   "tickwidth": 2.0,
+   "tickcolor": "#222222",
+   "ticklen": 8,
+   "tickfont": {
+    "family": "Arial",
+    "size": 18,
+    "color": "#222222",
+    "weight": "bold"
+   },
+   "showticklabels": true,
+   "automargin": true,
+   "title": {
+    "text": "Potential / V",
+    "font": {
+     "family": "Arial",
+     "size": 22,
+     "color": "#222222",
+     "weight": "bold"
+    }
+   },
+   "range": [
+    -1.9,
+    -1.4
+   ],
+   "autorange": false,
+   "tickmode": "auto",
+   "overlaying": "y",
+   "side": "right"
+  }
+ }
+}
