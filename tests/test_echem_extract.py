@@ -398,6 +398,7 @@ def run_cli(*args: str, tmp_path):
                           capture_output=True, text=True, encoding="utf-8")
 
 
+@pytest.mark.native   # 子プロセスで CLI を起動するので Pyodide では動かない
 def test_cli_ok(tmp_path):
     proc = run_cli(str(ECHEM / "imp_synth.CSV"), "--no-data", tmp_path=tmp_path)
     assert proc.returncode == 0, proc.stderr
@@ -406,6 +407,7 @@ def test_cli_ok(tmp_path):
     assert sorted(summary["files"]) == ["echem_metrics.csv", "echem_metrics.json", "manifest.json"]
 
 
+@pytest.mark.native
 def test_cli_bad_input_exit_2(tmp_path):
     proc = run_cli(str(ECHEM / "cp_synth.CSV"), "--phase", "0x9999", tmp_path=tmp_path)
     assert proc.returncode == 2
