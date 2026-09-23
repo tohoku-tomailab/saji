@@ -27,6 +27,8 @@ path = "src/saji/__init__.py"
 [tool.hatch.build.targets.wheel]
 packages = ["src/saji"]
 
+[tool.hatch.build.hooks.custom]   # hatch_build.py: git のコミットを wheel に埋め込む
+
 [dependency-groups]
 dev = ["pytest"]
 

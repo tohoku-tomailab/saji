@@ -3,7 +3,7 @@
     uv run python scripts/build_web.py
 
 web/dist/ に次を書き出す（web/dist は .gitignore 対象）:
-  wheels/saji-<版>-py3-none-any.whl   … Python パッケージ（ビルド情報を埋め込む）
+  wheels/saji-<版>-py3-none-any.whl   … Python パッケージ（git のコミットを埋め込む。hatch_build.py）
   wheels/<同梱する依存>.whl            … Pyodide に入っていない純 Python の依存
   tools.json                           … 全ツールの TOOL 定義（フォームの元）
   version.json                         … 版・git コミット・Pyodide の版・wheel の一覧
@@ -17,7 +17,6 @@ import json
 import shutil
 import subprocess
 import sys
-import zipfile
 from datetime import datetime
 from importlib import metadata
 from pathlib import Path
@@ -52,13 +51,10 @@ def git_commit() -> str | None:
         return None
 
 
-def build_saji_wheel(commit: str | None) -> Path:
+def build_saji_wheel() -> Path:
+    # git のコミットは hatch_build.py が wheel に埋め込む（manifest.json の git_commit になる）
     run(["uv", "build", "--wheel", "--out-dir", str(WHEELS)])
-    wheel = next(WHEELS.glob("saji-*.whl"))
-    # ビルド情報を埋め込む（manifest.json の git_commit になる）。ソースツリーには書かない。
-    with zipfile.ZipFile(wheel, "a") as zf:
-        zf.writestr("saji/_build_info.py", f"GIT_COMMIT = {commit!r}\n")
-    return wheel
+    return next(WHEELS.glob("saji-*.whl"))
 
 
 def fetch_vendored() -> dict[str, str]:
@@ -84,7 +80,7 @@ def main() -> None:
     WHEELS.mkdir(parents=True)
 
     commit = git_commit()
-    wheel = build_saji_wheel(commit)
+    wheel = build_saji_wheel()
     vendored = fetch_vendored()
 
     tools = registry.tools_json()
