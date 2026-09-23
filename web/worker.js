@@ -44,7 +44,8 @@ async function init() {
 
 async function unpackWheel(path) {
   const buf = await (await fetch("dist/" + path)).arrayBuffer();
-  pyodide.unpackArchive(buf, "wheel");
+  const site = pyodide.runPython("import site; site.getsitepackages()[0]");
+  pyodide.unpackArchive(buf, "wheel", { extractDir: site });
 }
 
 async function preparePackages(tool) {

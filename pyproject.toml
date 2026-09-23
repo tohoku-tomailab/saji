@@ -32,3 +32,4 @@ dev = ["pytest"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = ["native: ネイティブの Python でだけ実行するテスト（Pyodide では除外）"]
