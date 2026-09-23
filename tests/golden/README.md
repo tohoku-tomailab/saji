@@ -4,6 +4,7 @@
 
 - `xrd-process/case*-*.xy` … kaiseki-tool（v0.2.0）の `kaiseki xrd process` の出力（改行を LF にそろえたもの）。
   saji の出力がこれと一致することで、移植で数値が変わっていないことを確かめる。
+  ヘッダと点数は完全一致、値は最後の桁（1e-6）の違いまで許す（arPLS の計算は CPU によって末尾のビットが変わるため）。
   各ケースのパラメータは `tests/test_xrd_process.py` の `CASES` を参照。
 - `co2rr-plot/<ケース>-<名前>_co2rr_summary.csv` … kaiseki-tool の `kaiseki co2rr plot --output data`
   の集計CSV（utf-8-sig。Windows で CRLF になるので改行を LF にそろえたもの）。

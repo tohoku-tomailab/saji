@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import numpy as np
 import pytest
 
 from saji import registry
@@ -24,7 +25,22 @@ def test_matches_golden(case):
     files = {f.path: f.data for f in ex.files}
     for stem in ("synthA", "synthB"):
         expected = (GOLDEN / "xrd-process" / f"{case}-{stem}_processed.xy").read_bytes()
-        assert files[f"{stem}_processed.xy"] == expected
+        assert_xy_equal(files[f"{stem}_processed.xy"], expected)
+
+
+def assert_xy_equal(actual: bytes, expected: bytes) -> None:
+    """.xy がゴールデンと一致すること。
+
+    ヘッダ（処理条件）と点数は完全一致。値は %.6f の最後の桁（1e-6）の違いまで許す。
+    arPLS の線形計算は CPU（BLAS）によって末尾のビットが変わり、丸めの境目で最後の桁が
+    1 ずれることがある（GitHub Actions のランナーで実際に起きた）。
+    """
+    a_lines, e_lines = actual.decode().splitlines(), expected.decode().splitlines()
+    assert a_lines[0] == e_lines[0]
+    assert len(a_lines) == len(e_lines)
+    a = np.loadtxt(a_lines[1:])
+    e = np.loadtxt(e_lines[1:])
+    np.testing.assert_allclose(a, e, rtol=0, atol=1.5e-6)
 
 
 def test_peaks_and_figure():
