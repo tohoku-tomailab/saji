@@ -1,0 +1,6 @@
+# 既定は LF にそろえる
+* text=auto eol=lf
+# テストデータはバイト列のまま扱う（装置出力の CRLF や CP932 を保つ）
+tests/fixtures/** -text
+tests/golden/** -text
+*.png binary
