@@ -110,3 +110,45 @@
   - CP は大きくドリフトする（実データで -6.6→-3.0 V）。定常部だけ平均するときは `avg_range`。
     設定電流が途中で変わる（`種別` 列）ので、種別ごとの平均も出す。
   - 本測定は複数サイクルになることがある（`<名前>_main_cycle1.csv` …）。
+
+## PHI .spe（XPS、バイナリ。xps-extract）
+
+- `EOFH` までが ASCII ヘッダ（CRLF）、そのあとがバイナリ部。
+- 実測した領域は `SpectralRegDef: <番号> <?> <領域名> <原子番号> <点数> <ステップ> <開始BE> <終了BE> …` の行だけ。
+  `SpectralRegDefFull:` は「定義しただけ」の領域なので使わない。
+- バイナリ部（リトルエンディアン）: 全体ヘッダ int32×4、領域ごとのテーブル int32×24
+  （5番目=点数、19番目=バイト長、20番目=バイナリ部の先頭からのオフセット）、そのあと float32 の強度。
+- x は開始〜終了 BE を点数で等分（小数6桁に丸める）。ヘッダとテーブルが食い違ったら（点数、バイト長 = 点数×4、
+  範囲）エラーにする。**軸は装置の生の値で、チャージ補正は入っていない。**
+- 領域名はアンダースコア（`Cu_LMM`）。Multipak は空白（`Cu LMM`）なので、照合では空白と `_` を無視する。
+- 実データで Multipak の書き出しCSVと強度が全点一致することを確認済み（kaiseki-tool 時代）。
+- 要確認: テーブルの名前の無い欄の意味、ソフトの版によるテーブル構造の違い、サーベイの領域名が常に `Su1s` か。
+
+## Multipak Exporter .txt / .csv（XPS。xps-extract）
+
+- ブロック: ラベル行、+1 エリア番号、+2 XLabel、+3 YLabel、+4 点数、+5 からデータ（`x,y`）が空行まで。
+  書き出し設定によってはメタ情報が1行だけ（`offset=2`）。
+- ラベルは前後の空白を除いて完全一致で探す。既定のラベルは `Survey`。
+- **書き出し時にチャージ補正で軸がずらされている**（試料ごとに1つの値が全領域に一律。実データで +1.0906 /
+  +0.4838 eV、C1s が約 284.6 eV にそろう）。.spe 由来と重ねるときは、その差を `energy_shift` で足す（x だけ）。
+- 要確認: 基準値（284.6 か 284.8 eV か）。
+
+## XPS 抽出CSV（`<試料名>_<ラベル>.csv`。xps-extract の出力、xps-plot の入力）
+
+- UTF-8、CRLF、ヘッダ `x,y`。x = 結合エネルギー（eV）、y = 強度（`normalize` なら領域ごとに 0–1）。
+- 試料名はファイル名（拡張子なし）をドットで区切った最後の部分（`20260713_Name.108.sampleX` → `sampleX`）。
+  ラベルは空白と `_` を除く。
+- xps-plot は `x` / `y` 列があればそれを、無ければ先頭2列を使う。
+
+## XPS フィット結果 CSV（1ファイル = 1スペクトル。xps-fit）
+
+- 列は名前で解決する:
+  - energy: Energy / B.E. / BE / Binding Energy / eV / x（必須）
+  - spectrum: Spectrum / Raw / Raw data / Data / Intensity / CPS / y
+  - composite: Composite spectrum / Composite / Envelope / Fit / Fitted / Sum / Total
+  - background: Background / BG / Baseline
+  - residual: Residual(s) / Difference / Diff（無ければ spectrum − composite）
+- それ以外の数値列はすべて個別のピーク（`[1/1]`, `[2/1]`, …）。ピークの値はバックグラウンドを含む。
+- ヘッダ行は自動で探す（前置きの行を読み飛ばす）。BOM 付き UTF-8（Excel 経由）は BOM を優先する。
+- ピーク列はフィット範囲の外が空欄のことがある。
+- 要確認: どのソフト（CasaXPS / Multipak）の出力か、正確な列名。

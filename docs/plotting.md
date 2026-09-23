@@ -63,7 +63,14 @@
   既定の軸名は `Faradaic efficiency / %` と `Potential / V`。
 - **電気化学**（`techniques/echem.py`）: 成果物の図はない。プレビューだけ、CP は Potential (V) 対 Time (s)
   （フェイズごとに系列）、IMP は Nyquist（Z' 対 -Z''、マーカー付き）で溶液抵抗の位置に破線。
-- XPS は、移植したときにここへ追記する。
+- **XPS**（`techniques/xps/`）: x 軸は `Binding energy / eV` で既定は逆向き、y 軸は `Intensity / a.u.`
+  （目盛の数値は出さない）。xps-plot は1グループ = 1パネル（`domain` で縦に並べ、パネル名は paper 座標の注釈）、
+  系列は `offset_step` ずつずらす。xps-fit の成分は Spectrum（黒・最前面）/ Composite（赤）/
+  Background（灰の破線）/ 各ピーク（青・緑…の順、ピークとバックグラウンドの間を塗る。透明の基準線 +
+  `tonexty`、alpha 0.25）/ Residual（濃い灰、0 の点線）。凡例の順は Spectrum → Composite → Background →
+  ピーク → Residual。残差の置き場所は offset（データの下）/ panel（上の細いパネル）/ none。
+  ピーク注釈は、バックグラウンドを引いた成分の頂点から矢印を出し、その x で一番上の曲線より上に文字を置く。
+  overlay は1つの軸に段を積み、試料は凡例ではなく段ラベル（paper x、データ y）で示す。
 
 ## 成果物
 
