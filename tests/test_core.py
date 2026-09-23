@@ -84,3 +84,11 @@ def test_execute_manifest_and_zip():
 def test_execute_missing_required_input():
     with pytest.raises(InputError):
         execute(_dummy_module(), {"src": []}, {})
+
+
+def test_registry_names_match_modules():
+    from saji import registry
+
+    for name, mod in registry.load_all().items():
+        assert registry.get(name) is mod
+        assert mod.__name__.endswith(name.replace("-", "_"))

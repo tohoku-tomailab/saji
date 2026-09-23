@@ -19,7 +19,8 @@ uv run saji xrd-process data/ --params outputs/<前回>/manifest.json   # 同じ
 
 - 出力は `outputs/YYYYMMDD_hhmmss-<tool>/`（`--output-dir` で親を変更）。必ず `manifest.json`
   （版・コミット・パラメータ・入力のファイル名とハッシュ）が入る。
-- `--json` の要約: `ok, tool, output_dir, files, warnings, logs, data`。人間向けの表示は標準エラー。
+- `--json` の要約: `ok, tool, output_dir, folder, files, n_inputs, warnings, logs, data`（失敗時は
+  `ok: false, error, exit_code`）。人間向けの表示は標準エラー。
 - 終了コード: 0 成功 / 1 処理中のエラー / 2 引数や入力の誤り。完全に非対話。
 - フォルダを渡すと、対応する拡張子のファイルを再帰的に拾う。
 
@@ -63,7 +64,9 @@ MCP サーバ（今は不要）/ ツールごとの HTML / 手法ごとの JS �
 uv run pytest -q                                            # ネイティブ
 uv run python scripts/build_web.py                          # Web のビルド（web/dist）
 uv run --with playwright python scripts/test_pyodide.py     # Pyodide（初回は playwright install chromium）
+uv run --with playwright python scripts/check_web.py <tool> "<入力名>=<ファイル>"   # Web で1ツールを実行して確認
 uv run python -m http.server -d web 8000                    # Web を手元で確認 → http://localhost:8000/
+# Windows で Edge を使うなら、Playwright を使う2つの前に SAJI_BROWSER_CHANNEL=msedge を設定する
 git config core.hooksPath scripts/hooks                     # pre-commit フック（実データ・生成物の混入防止）
 ```
 
