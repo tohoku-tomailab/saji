@@ -63,6 +63,9 @@
   既定の軸名は `Faradaic efficiency / %` と `Potential / V`。
 - **電気化学**（`techniques/echem.py`）: 成果物の図はない。プレビューだけ、CP は Potential (V) 対 Time (s)
   （フェイズごとに系列）、IMP は Nyquist（Z' 対 -Z''、マーカー付き）で溶液抵抗の位置に破線。
+- **CV**（`techniques/eclab.py`、mpt-cycle）: 1つの軸に全ファイルを重ねる（オフセットなし）。点は測定順のまま
+  （並べ替えると往復のループが崩れる）。軸名は列名から作る（`E_RHE/V` → `E / V vs. RHE`、`Ewe/V` → `E / V`、
+  `<I>/mA` → `I / mA`。`< >` は Plotly がタグとして扱うので落とす）。凡例は既定で軸内。
 - **XPS**（`techniques/xps/`）: x 軸は `Binding energy / eV` で既定は逆向き、y 軸は `Intensity / a.u.`
   （目盛の数値は出さない）。xps-plot は1グループ = 1パネル（`domain` で縦に並べ、パネル名は paper 座標の注釈）、
   系列は `offset_step` ずつずらす。xps-fit の成分は Spectrum（黒・最前面）/ Composite（赤）/

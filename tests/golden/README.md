@@ -27,3 +27,6 @@
   ケースは `tests/test_xps_extract.py` の `CASES`。
 - `xps-plot/*.json` / `xps-fit/*.json` … kaiseki-tool の `prepare_traces` / `prepare_fit_traces` /
   `_prepare_overlay` が出す数値（`tests/fixtures/xps/kaiseki_golden.py` を kaiseki-tool の環境で実行して作る）。
+- `mpt-cycle/<ケース>/*.csv`・`cases.json`・`format_g10.json` … 移植元 mpt-cycle-extractor-webui（commit d4b755f）の
+  index.html の抽出関数を Node で実行した出力（`mpt-cycle/from_webui.mjs`）。saji の CSV がこれとバイト単位で一致する。
+  ケースと saji のパラメータの対応は `tests/test_mpt_cycle.py` の `CASES`。

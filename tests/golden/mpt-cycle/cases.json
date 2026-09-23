@@ -1,0 +1,72 @@
+{
+  "utf8-rhe": {
+    "file": "cv_utf8.mpt",
+    "opts": {
+      "cycle": 2,
+      "addRhe": true,
+      "ph": 14,
+      "refVsSHE": 0.105,
+      "tempC": 25
+    },
+    "output": "cv_utf8_cycle2_RHE.csv",
+    "rows": 80
+  },
+  "utf8-norhe-cycle1": {
+    "file": "cv_utf8.mpt",
+    "opts": {
+      "cycle": 1,
+      "addRhe": false,
+      "ph": null,
+      "refVsSHE": 0.105,
+      "tempC": 25
+    },
+    "output": "cv_utf8_cycle1.csv",
+    "rows": 80
+  },
+  "utf8-rhe-custom": {
+    "file": "cv_utf8.mpt",
+    "opts": {
+      "cycle": 3,
+      "addRhe": true,
+      "ph": 7.4,
+      "refVsSHE": 0.2,
+      "tempC": 25
+    },
+    "output": "cv_utf8_cycle3_RHE.csv",
+    "rows": 80
+  },
+  "comma-rhe": {
+    "file": "cv_comma.mpt",
+    "opts": {
+      "cycle": 2,
+      "addRhe": true,
+      "ph": 13,
+      "refVsSHE": 0.197,
+      "tempC": 30
+    },
+    "output": "cv_comma_cycle2_RHE.csv",
+    "rows": 60
+  },
+  "comma-missing-cycle": {
+    "file": "cv_comma.mpt",
+    "opts": {
+      "cycle": 5,
+      "addRhe": true,
+      "ph": 13,
+      "refVsSHE": 0.197,
+      "tempC": 25
+    },
+    "error": "サイクル 5 がありません（存在: 1, 2）。"
+  },
+  "not-eclab": {
+    "file": "not_eclab.mpt",
+    "opts": {
+      "cycle": 2,
+      "addRhe": true,
+      "ph": 13,
+      "refVsSHE": 0.197,
+      "tempC": 25
+    },
+    "error": "EC-Lab ASCII .mptファイルとして認識できません。"
+  }
+}

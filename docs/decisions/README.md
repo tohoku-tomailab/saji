@@ -14,3 +14,4 @@
 | [0007](0007-cli-argparse-no-skills.md) | CLI は argparse で生成し、AgentSkill は移植しない |
 | [0008](0008-pyodide-tests.md) | Pyodide のテストはブラウザで pytest を動かす自前スクリプト |
 | [0009](0009-migration-from-kaiseki.md) | kaiseki-tool からの移行で変えた点 |
+| [0010](0010-mpt-cycle-from-webui.md) | mpt-cycle-extractor-webui を mpt-cycle として移植（変えた点） |

@@ -19,6 +19,7 @@ TOOL_MODULES = [
     "xps_fit",
     "co2rr_plot",
     "echem_extract",
+    "mpt_cycle",
 ]
 
 
