@@ -55,7 +55,15 @@
   位置に薄い点線。見つかったピークにマーカー、各ピークで最も高い位置に物質名（近い注釈は段積み）。
   y 範囲はデータ + 5% を明示し、上端は注釈に合わせて広げる（Plotly の自動範囲は注釈を含めないため）。
   配色は tab10（11本以上なら viridis）/ tab20 / viridis。
-- XPS・CO2RR・電気化学は、移植したときにここへ追記する。
+- **CO2RR**（`techniques/co2rr.py`）: 生成物ごとの棒を `barmode="stack"` で積む（下→上 = products /
+  stack_order の順、凡例は上の生成物から）。色は固定（H2 灰, CO 黄, CH4 赤, C2H4 紫, CH3COOH 暗赤,
+  1-PrOH 濃青, EtOH 緑, HCOOH 水色）。生成物名は `<sub>`。x は分類軸、棒幅 0.6。棒の中に FE の値
+  （`min_value_label` 未満は書かない）。誤差は segment（各棒）/ total（高さ0の棒を最上段に積み、二乗和の
+  平方根）。電位は第2y軸に線＋四角マーカー（オレンジ #ff7f0e、誤差棒つき、凡例に出さない）。
+  既定の軸名は `Faradaic efficiency / %` と `Potential / V`。
+- **電気化学**（`techniques/echem.py`）: 成果物の図はない。プレビューだけ、CP は Potential (V) 対 Time (s)
+  （フェイズごとに系列）、IMP は Nyquist（Z' 対 -Z''、マーカー付き）で溶液抵抗の位置に破線。
+- XPS は、移植したときにここへ追記する。
 
 ## 成果物
 
