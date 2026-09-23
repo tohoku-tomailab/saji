@@ -118,7 +118,22 @@ def set_axis(fig: Fig, key: str, st: dict, *, title: str | None = None,
     elif side:
         axis["side"] = side
     fig["layout"][key] = axis
+    _fit_twin_axes(fig)
     return axis
+
+
+def _fit_twin_axes(fig: Fig) -> None:
+    """第2y軸があるとき、元の軸の右側の枠（mirror）を消し、軸外の凡例を右へ逃がす。"""
+    layout = fig["layout"]
+    for k, ax in list(layout.items()):
+        if not (k.startswith("yaxis") and isinstance(ax, dict) and ax.get("overlaying")):
+            continue
+        base = layout.get("yaxis" + ax["overlaying"][1:])
+        if base is not None:
+            base["mirror"] = False
+        leg = layout.get("legend") or {}
+        if ax.get("side") == "right" and float(leg.get("x", 0)) >= 1:
+            leg["x"] = max(float(leg["x"]), 1.14)
 
 
 def _clean_range(r: Sequence[float | None] | None) -> list[float | None] | None:

@@ -1,6 +1,6 @@
-"""合成データ（fixtures）を作るスクリプト。実データは使わない。
+"""XRD の合成データ（fixtures）を作るスクリプト。実データは使わない。
 
-    uv run python tests/fixtures/make_fixtures.py
+    uv run python tests/fixtures/xrd/make.py
 
 決定的（乱数は seed 固定）なので、何度実行しても同じファイルになる。
 """
@@ -11,7 +11,7 @@ from pathlib import Path
 
 import numpy as np
 
-HERE = Path(__file__).parent
+HERE = Path(__file__).parent.parent
 
 
 def gauss(x, mu, h, w):

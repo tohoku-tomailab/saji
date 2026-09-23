@@ -129,6 +129,7 @@ class _Renderer:
         self.handles: list[tuple[Any, str]] = []
         self.colorway = lay.get("colorway") or PLOTLY_DEFAULT_COLORWAY
         self._prev_y: dict[tuple[str, str], tuple[list[float], list[float]]] = {}
+        self.categories: dict[str, list[Any]] = {}   # 分類軸の x → 分類名の並び
 
     # -------------------------------------------------- 座標変換
     def paper_transform(self):
@@ -266,7 +267,22 @@ class _Renderer:
             set_(max(lo, hi), min(lo, hi))
 
     # -------------------------------------------------- 系列
+    def _collect_categories(self) -> None:
+        """文字列の x を持つ軸を分類軸とし、分類名を出現順に並べる（棒と線で共通の位置）。"""
+        for tr in self.fig.get("data", []):
+            xs = tr.get("x") or []
+            if any(isinstance(v, str) for v in xs):
+                cats = self.categories.setdefault(tr.get("xaxis", "x"), [])
+                cats.extend(v for v in xs if v not in cats)
+
+    def _xs(self, tr: dict) -> list[float]:
+        cats = self.categories.get(tr.get("xaxis", "x"))
+        if cats is None:
+            return _floats(tr.get("x"))
+        return [float(cats.index(v)) if v in cats else math.nan for v in tr.get("x") or []]
+
     def draw_traces(self) -> None:
+        self._collect_categories()
         bars: dict[tuple[str, str], list[tuple[int, dict]]] = {}
         for i, tr in enumerate(self.fig.get("data", [])):
             if tr.get("visible", True) in (False, "legendonly"):
@@ -279,12 +295,18 @@ class _Renderer:
                 self._scatter(self.axes[key], key, tr, color)
         for key, items in bars.items():
             self._bars(self.axes[key], items)
+        for (xk, yk), ax in self.axes.items():
+            cats = self.categories.get(xk)
+            if cats and not self._yaxis(yk).get("overlaying"):
+                ax.set_xticks(range(len(cats)))
+                ax.set_xticklabels([html_to_mathtext(c) for c in cats])
+                ax.set_xlim(-0.6, len(cats) - 0.4)
 
     def _label(self, tr: dict) -> str:
         return html_to_mathtext(tr.get("name", "")) if tr.get("showlegend", True) else "_nolegend_"
 
     def _scatter(self, ax, key, tr: dict, default_color: str) -> None:
-        x, y = _floats(tr.get("x")), _floats(tr.get("y"))
+        x, y = self._xs(tr), _floats(tr.get("y"))
         mode = tr.get("mode", "lines")
         line = tr.get("line") or {}
         marker = tr.get("marker") or {}
@@ -323,26 +345,19 @@ class _Renderer:
     def _bars(self, ax, items: list[tuple[int, dict]]) -> None:
         import numpy as np
 
-        cats: list[Any] = []
-        for _, tr in items:
-            for v in tr.get("x") or []:
-                if v not in cats:
-                    cats.append(v)
-        numeric = all(isinstance(c, (int, float)) for c in cats)
-        pos = {c: (float(c) if numeric else float(k)) for k, c in enumerate(cats)}
         mode = self.layout.get("barmode", "group")
         n = len(items)
-        bottoms = {c: 0.0 for c in cats}
+        bottoms: dict[float, float] = {}
         for j, (i, tr) in enumerate(items):
-            xs = tr.get("x") or []
+            xpos = np.array(self._xs(tr))
+            xs = list(xpos)
             ys = _floats(tr.get("y"))
             width = float(tr.get("width") or 0.8)
-            xpos = np.array([pos[c] for c in xs])
             if mode == "group" and n > 1:
                 w = width / n
                 xpos = xpos - width / 2 + w * (j + 0.5)
                 width = w
-            bottom = [bottoms[c] if mode == "stack" else 0.0 for c in xs]
+            bottom = [bottoms.get(c, 0.0) if mode == "stack" else 0.0 for c in xs]
             marker = tr.get("marker") or {}
             edge = marker.get("line") or {}
             err = tr.get("error_y") or {}
@@ -365,12 +380,9 @@ class _Renderer:
                                 **self._font_kw(tf, self.base_font))
             if mode == "stack":
                 for c, v in zip(xs, ys):
-                    bottoms[c] += 0.0 if math.isnan(v) else v
+                    bottoms[c] = bottoms.get(c, 0.0) + (0.0 if math.isnan(v) else v)
             if tr.get("showlegend", True):
                 self.handles.append((cont, self._label(tr)))
-        if not numeric:
-            ax.set_xticks([pos[c] for c in cats])
-            ax.set_xticklabels([html_to_mathtext(c) for c in cats])
 
     # -------------------------------------------------- 図形・注釈
     def _axes_for(self, xref: str, yref: str):
