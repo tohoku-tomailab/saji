@@ -68,12 +68,13 @@ def _legend(st: dict, where: str) -> dict[str, Any]:
 
 def set_axis(fig: Fig, key: str, st: dict, *, title: str | None = None,
              range: Sequence[float | None] | None = None, reversed: bool = False,
-             log: bool = False, show_ticklabels: bool = True,
+             log: bool = False, category: bool = False, show_ticklabels: bool = True,
              domain: Sequence[float] | None = None, anchor: str | None = None,
              overlaying: str | None = None, side: str | None = None,
              color: str | None = None, mirror: bool = True) -> dict[str, Any]:
     """軸（xaxis / yaxis / xaxis2 …）を設定して返す。
 
+    category=True で分類軸（"7" "9" のような数字のラベルも分類として並べる）。
     range は [下限, 上限]（片側 None なら自動。順不同で与えてよい）。reversed=True で
     大→小（XPS の結合エネルギーなど）。overlaying="y" + side="right" で第2y軸。
     """
@@ -90,6 +91,8 @@ def set_axis(fig: Fig, key: str, st: dict, *, title: str | None = None,
         axis["title"] = {"text": title, "font": font(st["axis_title"], c)}
     if log:
         axis["type"] = "log"
+    if category:
+        axis["type"] = "category"
     rng = _clean_range(range)
     if rng is not None:
         lo, hi = rng
@@ -168,10 +171,11 @@ def add_line(fig: Fig, x: Sequence, y: Sequence, name: str, st: dict, *,
              marker_size: float | None = None, fill: str | None = None,
              fillcolor: str | None = None, xaxis: str = "x", yaxis: str = "y",
              showlegend: bool = True, legendgroup: str | None = None,
-             hover_digits: int = 4) -> dict[str, Any]:
+             hover_digits: int = 4, error: Sequence[float] | None = None) -> dict[str, Any]:
     """線・散布図（scatter）を追加する。
 
     fill: None / "tozeroy"（y=0 まで塗る）/ "tonexty"（直前の系列まで塗る）。
+    error を渡すと、各点に上下対称の誤差棒を付ける（色は系列と同じ）。
     """
     if dash not in DASHES:
         raise ValueError(f"未対応の線種: {dash}（{DASHES}）")
@@ -201,6 +205,11 @@ def add_line(fig: Fig, x: Sequence, y: Sequence, name: str, st: dict, *,
             tr["fillcolor"] = fillcolor
     if legendgroup:
         tr["legendgroup"] = legendgroup
+    if error is not None:
+        tr["error_y"] = {"type": "data", "array": to_jsonable(error), "visible": True,
+                         "thickness": 2.0, "width": 5}
+        if color:
+            tr["error_y"]["color"] = color
     fig["data"].append(tr)
     return tr
 

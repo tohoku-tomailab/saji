@@ -271,6 +271,8 @@ class _Renderer:
         """文字列の x を持つ軸を分類軸とし、分類名を出現順に並べる（棒と線で共通の位置）。"""
         for tr in self.fig.get("data", []):
             xs = tr.get("x") or []
+            if self._xaxis(tr.get("xaxis", "x")).get("type") == "category":
+                xs = [str(v) for v in xs]
             if any(isinstance(v, str) for v in xs):
                 cats = self.categories.setdefault(tr.get("xaxis", "x"), [])
                 cats.extend(v for v in xs if v not in cats)
@@ -279,7 +281,10 @@ class _Renderer:
         cats = self.categories.get(tr.get("xaxis", "x"))
         if cats is None:
             return _floats(tr.get("x"))
-        return [float(cats.index(v)) if v in cats else math.nan for v in tr.get("x") or []]
+        xs = tr.get("x") or []
+        if self._xaxis(tr.get("xaxis", "x")).get("type") == "category":
+            xs = [str(v) for v in xs]
+        return [float(cats.index(v)) if v in cats else math.nan for v in xs]
 
     def draw_traces(self) -> None:
         self._collect_categories()
@@ -328,6 +333,11 @@ class _Renderer:
                           markeredgecolor=to_mpl_color(edge.get("color") or marker.get("color") or color),
                           markeredgewidth=_pt(edge.get("width"), 0))
             (handle,) = ax.plot(x, y, **kw)
+        err = tr.get("error_y") or {}
+        if err.get("visible", True) and err.get("array"):
+            ax.errorbar(x, y, yerr=_floats(err["array"]), fmt="none",
+                        ecolor=to_mpl_color(err.get("color") or color),
+                        elinewidth=_pt(err.get("thickness"), 2), capsize=_pt(err.get("width"), 4))
         fill = tr.get("fill")
         if fill in ("tozeroy", "tonexty"):
             fc = to_mpl_color(tr.get("fillcolor")) or _with_alpha(color, 0.5)
