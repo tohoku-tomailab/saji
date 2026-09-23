@@ -1,7 +1,8 @@
 """XRD（X線回折）の手法知識。
 
 数値処理は kaiseki-tool の xrd/process.py（元は ref/xrd_process.py）と等価に保つ。
-入力形式は docs/data-formats.md の「Rigaku SmartLab .TXT」を参照。
+重ね描き（xrd-overlay）は kaiseki-tool の xrd/overlay.py と等価に保つ（末尾の「重ね描き」）。
+入力形式は docs/data-formats.md の「Rigaku SmartLab .TXT」「2列 .xy」を参照。
 
 処理順序:  ビニング(任意) -> バックグラウンド除去 -> スムージング -> 規格化
   背景を先に引くので最終曲線のベースラインは≒0。ピーク検出はこの最終曲線に対して
@@ -11,6 +12,7 @@
   - x軸は 2θ。規格化したときは左軸=生データと背景（counts）、右軸=規格化後。
   - ピーク帰属（参照ピーク）は、ピークが立っている位置にマーカーと物質名を付ける。
     近い位置の注釈は上方向に段積みする。
+  - 重ね描きは1つの軸にオフセットで積む（既定は先頭のファイルが最上段）。
 """
 
 from __future__ import annotations
@@ -21,10 +23,10 @@ from typing import Any, Sequence
 import numpy as np
 
 from ..core.plot import (
-    add_annotation, add_line, new_figure, set_axis,
+    add_annotation, add_hline, add_line, add_vline, new_figure, set_axis,
 )
-from ..core.plot.style import css_color, marker_symbol
-from ..core.tableio import load_numeric_pairs
+from ..core.plot.style import css_color, marker_symbol, tab10
+from ..core.tableio import load_numeric_pairs, load_xy_text
 
 XLABEL = "2θ (deg)"
 
@@ -353,3 +355,203 @@ def process_figure(res: dict, st: dict, *, title: str, peaks=None, show_raw=True
         set_axis(fig, "yaxis2", st, title=f"Normalized intensity (target={target:g})",
                  range=[0, peak_top], overlaying="y", side="right", color="#ff7f0e")
     return fig, found
+
+
+# ============================================================ 重ね描き（xrd-overlay）
+# kaiseki-tool の xrd/overlay.py と等価。処理済み .xy（2列: 2θ 強度）を複数本、
+# 1つの軸にオフセットを付けて重ねる（ウォーターフォール）。
+OVERLAY_YLABEL = "Intensity (offset)"
+OVERLAY_GAP = 1.10
+
+# matplotlib の tab20 / viridis の色（run() で matplotlib を読み込まずに済むよう値を写してある）。
+# viridis は 256 色の表（#rrggbb の rrggbb を連結）。matplotlib の cmap(v) と同じく
+# index = min(int(v * 256), 255) で引く。
+_TAB20 = [
+    "#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896",
+    "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7",
+    "#bcbd22", "#dbdb8d", "#17becf", "#9edae5",
+]
+_VIRIDIS = (
+    "44015444025645045745055946075a46085c460a5d460b5e470d60470e6147106347116447136548146748"
+    "166848176948186a481a6c481b6d481c6e481d6f481f70482071482173482374482475482576482677482878"
+    "482979472a7a472c7a472d7b472e7c472f7d46307e46327e46337f463480453581453781453882443983443a"
+    "83443b84433d84433e85423f854240864241864142874144874045884046883f47883f48893e49893e4a893e"
+    "4c8a3d4d8a3d4e8a3c4f8a3c508b3b518b3b528b3a538b3a548c39558c39568c38588c38598c375a8c375b8d"
+    "365c8d365d8d355e8d355f8d34608d34618d33628d33638d32648e32658e31668e31678e31688e30698e306a"
+    "8e2f6b8e2f6c8e2e6d8e2e6e8e2e6f8e2d708e2d718e2c718e2c728e2c738e2b748e2b758e2a768e2a778e2a"
+    "788e29798e297a8e297b8e287c8e287d8e277e8e277f8e27808e26818e26828e26828e25838e25848e25858e"
+    "24868e24878e23888e23898e238a8d228b8d228c8d228d8d218e8d218f8d21908d21918c20928c20928c2093"
+    "8c1f948c1f958b1f968b1f978b1f988b1f998a1f9a8a1e9b8a1e9c891e9d891f9e891f9f881fa0881fa1881f"
+    "a1871fa28720a38620a48621a58521a68522a78522a88423a98324aa8325ab8225ac8226ad8127ad8128ae80"
+    "29af7f2ab07f2cb17e2db27d2eb37c2fb47c31b57b32b67a34b67935b77937b87838b9773aba763bbb753dbc"
+    "743fbc7340bd7242be7144bf7046c06f48c16e4ac16d4cc26c4ec36b50c46a52c56954c56856c66758c7655a"
+    "c8645cc8635ec96260ca6063cb5f65cb5e67cc5c69cd5b6ccd5a6ece5870cf5773d05675d05477d1537ad151"
+    "7cd2507fd34e81d34d84d44b86d54989d5488bd6468ed64590d74393d74195d84098d83e9bd93c9dd93ba0da"
+    "39a2da37a5db36a8db34aadc32addc30b0dd2fb2dd2db5de2bb8de29bade28bddf26c0df25c2df23c5e021c8"
+    "e020cae11fcde11dd0e11cd2e21bd5e21ad8e219dae319dde318dfe318e2e418e5e419e7e419eae51aece51b"
+    "efe51cf1e51df4e61ef6e620f8e621fbe723fde725"
+)
+_QUALITATIVE = {"tab10": 10, "tab20": 20}
+CMAPS = ("tab10", "tab20", "viridis")
+
+
+def _viridis(v: float) -> str:
+    i = min(int(v * 256), 255)
+    return "#" + _VIRIDIS[i * 6:i * 6 + 6]
+
+
+def assign_colors(n: int, cmap: str = "tab10") -> tuple[list[str], str]:
+    """n 本の系列に色を割り当てる。戻り値は (色のリスト, 実際に使った色表の名前)。
+
+    tab10 / tab20（質的）は順に巡回、viridis（連続）は両端を含めて等間隔に取る。
+    質的な色表で本数が足りないとき（tab10 で 11 本以上など）は viridis に切り替える。
+    """
+    name = cmap
+    if name in _QUALITATIVE and n > _QUALITATIVE[name]:
+        name = "viridis"
+    if name == "tab10":
+        return [tab10(i) for i in range(n)], name
+    if name == "tab20":
+        return [_TAB20[i % len(_TAB20)] for i in range(n)], name
+    if name == "viridis":
+        return [_viridis(i / max(1, n - 1)) for i in range(n)], name
+    raise ValueError(f"未対応の色表: {cmap}（{', '.join(CMAPS)}）")
+
+
+def load_xy(text: str) -> tuple[np.ndarray, np.ndarray]:
+    """2列 .xy（2θ 強度。'#' 以降はコメント）を読む。xrd-process の _processed.xy と同じ形。"""
+    return load_xy_text(text)
+
+
+def overlay_step(curves: Sequence[tuple[Any, Any]], offset: str | float = "auto",
+                 gap: float = OVERLAY_GAP) -> float:
+    """オフセットの刻み。
+
+    "auto" → gap ×（全系列の中で最大の y のレンジ）。等間隔で重ならない。
+    数値   → その値をそのまま刻みにする。
+    """
+    if offset == "auto":
+        ranges = [float(np.nanmax(y) - np.nanmin(y)) for _, y in curves]
+        return gap * (max(ranges) if ranges else 1.0)
+    return float(offset)
+
+
+def _nan_extent(arrays) -> tuple[float, float]:
+    """配列群の有限値の最小・最大（無ければ 0, 1）。"""
+    lo, hi = np.inf, -np.inf
+    for a in arrays:
+        a = np.asarray(a, dtype=float)
+        a = a[np.isfinite(a)]
+        if a.size:
+            lo, hi = min(lo, float(a.min())), max(hi, float(a.max()))
+    if not np.isfinite(lo):
+        return 0.0, 1.0
+    return lo, hi
+
+
+def overlay_figure(traces: list[dict], st: dict, *, offset: str | float = "auto",
+                   gap: float = OVERLAY_GAP, cmap: str = "tab10", normalize_each: bool = False,
+                   bottom_up: bool = False, peaks=None, peak_tol: float = 0.3,
+                   peak_prominence: float | None = None, peak_guides: bool = True,
+                   peaks_on: str = "each", title: str | None = None, xlim=None,
+                   xlabel: str | None = None, ylabel: str | None = None,
+                   legend: str = "inside"):
+    """重ね描き（ウォーターフォール）の図を作る。戻り値は (図, 情報 dict)。
+
+    traces: 描く順の [{label, x, y, color(None 可), offset(None 可)}, ...]。
+      color / offset が None の系列は自動（色は cmap、オフセットは 刻み × 段番号）。
+    既定（top-down）は traces の先頭を最上段に積む。bottom_up=True で先頭を最下段に。
+    normalize_each=True なら、重ねる前に各系列を最大値で割る（最大が 0 / 無効なら割らない）。
+    peaks（[(2θ, 物質名, マーカー, 色), ...]）を渡すと系列ごとにピークを探し、見つかった
+    位置にマーカーを付け、各ピークで最も高い位置に物質名を書く（近いものは段積み）。
+    peaks_on="top" なら、各ピークで最も上の系列にだけマーカーを付ける。
+    y 軸の範囲は kaiseki（matplotlib の自動範囲 = データ + 余白 5%、注釈が収まるよう上端を
+    広げる）と同じ値を明示する（Plotly の自動範囲は注釈の文字を含めないため）。
+    """
+    curves = []
+    for t in traces:
+        x, y = np.asarray(t["x"], dtype=float), np.asarray(t["y"], dtype=float)
+        if normalize_each:
+            mx = np.nanmax(y)
+            if mx and np.isfinite(mx):
+                y = y / mx
+        curves.append((x, y))
+
+    auto_colors, used_cmap = assign_colors(len(traces), cmap)
+    step = overlay_step(curves, offset, gap)
+    n = len(traces)
+
+    fig = new_figure(st, title=title, legend=legend)
+    if bottom_up:
+        # 凡例は常に図の上→下の並びにする（下積みでは描く順が下→上なので逆順）
+        fig["layout"]["legend"]["traceorder"] = "reversed"
+
+    infos: list[dict] = []
+    ys_all: list[np.ndarray] = []
+    for i, (t, (x, y)) in enumerate(zip(traces, curves)):
+        color = css_color(t.get("color")) or auto_colors[i]
+        if t.get("offset") is not None:
+            off = float(t["offset"])                 # 系列ごとの指定が最優先
+        else:
+            off = (i if bottom_up else (n - 1 - i)) * step
+        found = (find_assignment_peaks(x, y, peaks, tol=peak_tol, prominence=peak_prominence)
+                 if peaks else [])
+        add_line(fig, x, y + off, t["label"], st, color=color)
+        # 各系列の基線（オフセットの位置）を薄い点線で
+        add_hline(fig, off, color=color, width=st["line"] * 0.4, dash="dot", opacity=0.4)
+        ys_all += [y + off, np.array([off])]
+        infos.append({"label": t["label"], "color": color, "offset": off,
+                      "n_points": int(len(x)), "peaks": found})
+
+    laid: list[dict] = []
+    missed: list[str] = []
+    if peaks:
+        marker_gap = 0.05 * step
+        label_anns = []
+        for k, (pos, material, marker, pcolor) in enumerate(peaks):
+            hits = [(info["peaks"][k]["x"], info["peaks"][k]["y"] + info["offset"])
+                    for info in infos if info["peaks"][k]["found"]]
+            if peaks_on == "top" and hits:
+                hits = [max(hits, key=lambda h: h[1])]
+            if hits:
+                tpx, tpy = max(hits, key=lambda h: h[1])
+                label_anns.append(dict(x=tpx, y_base=tpy + marker_gap, material=material,
+                                       marker=marker, color=pcolor, _hits=hits, _tpy=tpy))
+            else:
+                missed.append(material)
+            if peak_guides:
+                add_vline(fig, pos, color=css_color(pcolor), width=st["line"] * 0.6,
+                          dash="dot", opacity=0.3)
+
+        laid = layout_peak_annotations(label_anns, y_span=step, step_frac=0.12)
+        for ann in laid:
+            # 最も高い系列のマーカーは段積み後の位置、他の系列はピークの少し上
+            mx = [px for px, _ in ann["_hits"]]
+            my = [ann["y_anchor"] if ytop == ann["_tpy"] else ytop + marker_gap
+                  for _, ytop in ann["_hits"]]
+            color = css_color(ann["color"])
+            add_line(fig, mx, my, ann["material"], st, lines=False, markers=True,
+                     marker_symbol=marker_symbol(ann["marker"]), color=color,
+                     marker_size=st["marker"] * 1.4, showlegend=False)
+            add_annotation(fig, ann["x"], ann["y_anchor"], ann["material"], st, color=color,
+                           yanchor="bottom", yshift=st["marker"] + 2)
+            ys_all.append(np.asarray(my, dtype=float))
+
+    # y 範囲: matplotlib の自動範囲（データ + 余白 5%）→ 注釈が収まるよう上端を広げる
+    lo, hi = _nan_extent(ys_all)
+    span = (hi - lo) or 1.0
+    y_lo, y_hi = lo - 0.05 * span, hi + 0.05 * span
+    if laid:
+        y_hi = max(y_hi, max(a["y_anchor"] for a in laid) + 0.15 * step)
+
+    default_ylabel = OVERLAY_YLABEL + ("  [each max-normalized]" if normalize_each else "")
+    set_axis(fig, "xaxis", st, title=xlabel or XLABEL, range=xlim)
+    set_axis(fig, "yaxis", st, title=ylabel or default_ylabel, range=[y_lo, y_hi])
+
+    info = {
+        "step": step, "cmap": used_cmap, "traces": infos, "peaks_missed": missed,
+        "labels": [{"material": a["material"], "x": a["x"], "y": a["y_anchor"],
+                    "stack_level": a["stack_level"]} for a in laid],
+        "ylim": [y_lo, y_hi],
+    }
+    return fig, info
