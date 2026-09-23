@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.venv/
+.venv-*/
+.pytest_cache/
+
+# 生成物
+outputs/
+web/dist/
+
+# 実験データ（実データはリポジトリに含めない）
+data/
+ref/
+
+# 個人設定
+.claude/settings.local.json
