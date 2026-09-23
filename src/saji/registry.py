@@ -1,6 +1,7 @@
 """ツールの一覧（CLI と Web の両方が参照する唯一の一覧）。
 
 ツールを追加したら TOOL_MODULES に1行足す（docs/adding-a-tool.md）。
+モジュール名はツール名の - を _ にしたもの（xrd-process → xrd_process）。
 並び順がそのまま `saji list` と Web の一覧の順になる。
 """
 
@@ -34,10 +35,16 @@ def load_all() -> dict[str, ModuleType]:
 
 
 def get(name: str) -> ModuleType:
-    tools = load_all()
-    if name not in tools:
+    """ツール名 → モジュール。そのツールのモジュールだけを import する
+    （Web では、ほかのツールが使うパッケージがまだ読み込まれていないことがあるため）。
+    モジュール名はツール名の - を _ にしたもの。"""
+    mod_name = name.replace("-", "_")
+    if mod_name not in TOOL_MODULES:
         raise KeyError(f"ツールがありません: {name}（saji list で一覧を確認）")
-    return tools[name]
+    mod = importlib.import_module(f"saji.tools.{mod_name}")
+    if mod.TOOL.name != name:
+        raise RuntimeError(f"{mod_name}.py の TOOL.name は {name} にしてください（今は {mod.TOOL.name}）")
+    return mod
 
 
 def tools_json() -> list[dict[str, Any]]:

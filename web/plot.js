@@ -2,11 +2,11 @@
 // 手法の知識は持たない。図の中身はすべて Python（saji.techniques）が決める。
 //
 // 主な使い方は「描いて、少しいじって、スクショしてスライドに貼る」なので、
-// タイトル・軸名・凡例・注釈は図の上で直接編集・移動できるようにしてある。
+// 凡例と注釈は図の上で直接編集・移動できるようにしてある。
 
-// 図のタイトルは編集対象にしない（空の副題に「Click to enter …」が出てスクショに写るため）
+// 図のタイトルと軸名は編集対象にしない（空欄に「Click to enter …」が出てスクショに写るため）。
+// 軸名や題はツールのパラメータ（xlabel / title など）で変える。
 const EDITS = {
-  axisTitleText: true,
   legendText: true,
   legendPosition: true,
   annotationText: true,

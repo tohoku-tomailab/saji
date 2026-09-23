@@ -10,7 +10,7 @@ matplotlib」と決めていた。許可要素は線・散布図・軸・凡例�
 ## 決定（人間の承認済み）
 - 見た目の基準は Plotly 側。スライドにそのまま貼れる大きさ・太さ（プリセット paper/slide/poster）。
   matplotlib 変換器はそれに揃える（完全一致でなくてよい）。
-- ブラウザでは凡例・軸名・注釈を図の上で編集・移動でき、PNG / SVG で保存できる。
+- ブラウザでは凡例と注釈を図の上で編集・移動でき、PNG / SVG で保存できる。
 - 許可要素に、棒グラフ（積み上げ・誤差棒・数値ラベル）、第2y軸、塗りつぶし（tozeroy / tonexty）、
   複数パネル（domain）、矢印つき注釈を足す（kaiseki-tool の CO2RR / XPS の図に必要）。一覧は docs/plotting.md。
 - 成果物は PNG / SVG / 図の JSON / 図のデータ CSV（Origin などで仕上げる用）の4つ。
