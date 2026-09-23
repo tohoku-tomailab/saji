@@ -1,0 +1,25 @@
+# push ごとにテストを2つの環境（ネイティブの Python / Pyodide）で実行する。
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync
+      - run: uv run pytest -q
+
+  pyodide:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync
+      - run: uv run python scripts/build_web.py
+      - run: uv run --with playwright playwright install --with-deps chromium
+      - run: uv run --with playwright python scripts/test_pyodide.py

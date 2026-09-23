@@ -1,0 +1,33 @@
+#!/bin/sh
+# 実データや生成物のコミットを拒否する（有効化: git config core.hooksPath scripts/hooks）。
+#   - outputs/ data/ ref/ web/dist/ の中身
+#   - 1 MB を超えるファイル
+#   - 装置の生データらしい拡張子（tests/fixtures/ の合成データは除く）
+# 本当に必要なときだけ、理由を確かめたうえで git commit --no-verify を使う。
+
+MAX_BYTES=1048576
+RAW_EXT='\.(spe|ras|raw|rasx|vms|dat|mpt|csv|txt)$'
+status=0
+
+for f in $(git diff --cached --name-only --diff-filter=ACMR); do
+  case "$f" in
+    outputs/*|data/*|ref/*|web/dist/*)
+      echo "拒否: $f（生成物・実データ用のフォルダ）"; status=1; continue ;;
+  esac
+  size=$(git cat-file -s ":$f" 2>/dev/null || echo 0)
+  if [ "$size" -gt "$MAX_BYTES" ]; then
+    echo "拒否: $f（$size バイト。1 MB を超えるファイル）"; status=1; continue
+  fi
+  case "$f" in
+    tests/fixtures/*|tests/golden/*|docs/*|examples/*) ;;
+    *)
+      if echo "$f" | grep -Eiq "$RAW_EXT"; then
+        echo "拒否: $f（装置のデータらしい拡張子。合成データなら tests/fixtures/ に置く）"; status=1
+      fi ;;
+  esac
+done
+
+if [ $status -ne 0 ]; then
+  echo "実データ・生成物はコミットしない（AGENTS.md の禁止事項）。"
+fi
+exit $status
