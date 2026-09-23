@@ -469,8 +469,10 @@ class _Renderer:
             if ann.get("showarrow", True):
                 dx = float(ann.get("ax", -10)) * PT_PER_PX
                 dy = -float(ann.get("ay", -30)) * PT_PER_PX
+                # Plotly と同じく、文字の置き方は xanchor / yanchor に従う（auto は中央）
                 ax.annotate(text, xy=xy, xycoords=tf, xytext=(dx, dy), textcoords="offset points",
-                            ha="center", va="center", annotation_clip=False,
+                            ha=_HA.get(ann.get("xanchor", "auto"), "center"),
+                            va=_VA.get(ann.get("yanchor", "auto"), "center"), annotation_clip=False,
                             arrowprops={"arrowstyle": "-", "color": to_mpl_color(
                                 ann.get("arrowcolor", kw["color"])),
                                 "lw": _pt(ann.get("arrowwidth"), 1), "shrinkA": 2, "shrinkB": 2},
