@@ -3,6 +3,8 @@
 研究室の実験データ処理（装置出力の読み込み・前処理・集計・図示）をまとめたツール群。
 同じ Python のコアを、**CLI**（人間とエージェント）と **Web**（ブラウザ内の Python = Pyodide）の両方から使う。
 対象外: サーバで動くアプリ、実験データの保管、論文用の図の最終仕上げ（CSV を出して他のソフトで仕上げる）。
+Web 版: https://tohoku-tomailab.github.io/saji/ / リポジトリ: https://github.com/tohoku-tomailab/saji
+（CLI は `uv tool install git+https://github.com/tohoku-tomailab/saji`、更新は `uv tool upgrade saji`）
 
 ※ このリポジトリに CLAUDE.md は置かない（置くと AGENTS.md が読まれなくなる）。
 

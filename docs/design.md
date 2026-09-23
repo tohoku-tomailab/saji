@@ -76,7 +76,7 @@ runner（`core/runner.py`）が次を行う。
 - 完全に非対話。人間向けのメッセージは標準エラー、`--json` の要約だけ標準出力。
 - 終了コード 0 / 1（処理中のエラー）/ 2（引数や入力の誤り）。
 - 入力はファイル・フォルダ（再帰、拡張子で絞る）・ワイルドカード（Windows でも展開する）。
-- 配布は `uv tool install git+<リポジトリURL>`。
+- 配布は `uv tool install git+https://github.com/tohoku-tomailab/saji`（更新は `uv tool upgrade saji`）。
 
 ## Web（Pyodide）
 

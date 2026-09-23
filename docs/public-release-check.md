@@ -2,6 +2,9 @@
 
 **公開設定の変更は人間が行う。** ここでは調べた結果だけを記録する（削除や履歴の書き換えはしていない）。
 
+2026-09-23 に https://github.com/tohoku-tomailab/saji （Public）へ公開し、Web 版を
+https://tohoku-tomailab.github.io/saji/ で公開した（人間の判断）。以下は公開前に調べた結果。
+
 ## 実データの混入
 
 - 現在のファイル・git の履歴全体とも、実データは見つからなかった。`tests/fixtures/` はすべて生成スクリプト

@@ -26,9 +26,13 @@ Pyodide のメジャー版は Python の更新に合わせて年1回出る（例
 
 ## Web 版のデプロイ（GitHub Pages）
 
-1. リポジトリの Settings → Pages で Source を「GitHub Actions」にする（公開は人間が判断する）。
-2. Actions タブで `deploy-pages` を手動実行する（テスト → `build_web.py` → `web/` を公開）。
-3. 公開された URL を README に書く。
+公開先: https://tohoku-tomailab.github.io/saji/ （リポジトリ https://github.com/tohoku-tomailab/saji 、
+Settings → Pages の Source は「GitHub Actions」に設定済み）。
+
+- main に変更を入れたら、Actions タブの `deploy-pages` を手動実行する（テスト → `build_web.py` → `web/` を公開）。
+  自動では公開されない（公開の判断を人間に残すため）。
+- 公開された版は https://tohoku-tomailab.github.io/saji/dist/version.json の `git_commit` で確かめられる。
+- CLI 版の利用者には `uv tool upgrade saji` で更新してもらう（README に記載）。
 
 手元で確認するときは `uv run python scripts/build_web.py` のあと
 `uv run python -m http.server -d web 8000` で http://localhost:8000/ を開く
