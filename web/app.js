@@ -127,6 +127,8 @@ async function selectTool(name) {
   cli.hidden = true;
   $("form").hidden = false;
   renderInputs(tool);
+  $("param-tools").hidden = Boolean(tool.panel);
+  setNote("");
   if (tool.panel) {
     const mod = await import(`./panels/${tool.name}.js`);
     state.panel = mod.mount($("params"), {
@@ -136,6 +138,7 @@ async function selectTool(name) {
     });
   } else {
     renderParams(tool);
+    restoreParams(tool);
   }
   worker.postMessage({ type: "prepare", tool: tool.name });
   updateRunState();
@@ -291,7 +294,7 @@ function renderParams(tool) {
     const d = document.createElement("details");
     d.className = "advanced";
     const s = document.createElement("summary");
-    s.textContent = `詳細設定（${advanced.length}）`;
+    s.textContent = s.dataset.base = `詳細設定（${advanced.length}）`;
     d.append(s, ...groupsOf(advanced));
     root.append(d);
   }
@@ -422,6 +425,225 @@ function collectParams(tool) {
   if (errors.length) throw new Error(errors.join("\n"));
   return out;
 }
+
+// ============================================================ 設定の保存・復元・書き出し
+// パラメータ欄の状態をツールごとに localStorage に保存し、次に開いたときに戻す
+// （docs/decisions/0011-web-saved-params.md）。入力ファイルは保存しない。
+// 保存するのは送る値ではなく欄の状態（raw）: bool → true/false、range → [下限, 上限]、
+// それ以外 → 欄の文字列。空欄は「既定値を使う」なので、送る値だけでは区別できないため。
+// 既定値と同じ欄は保存しない（ツールの既定値が後で変わったら、新しい既定値に従う）。
+const STORE_PREFIX = "saji:params:";
+let undoValues = null;   // 「既定値に戻す」の直前の状態（元に戻す用）
+
+function storeGet(tool) {
+  try {
+    const s = JSON.parse(localStorage.getItem(STORE_PREFIX + tool.name));
+    return s && typeof s.values === "object" && s.values ? s.values : null;
+  } catch { return null; }
+}
+
+function storeSet(tool, values) {
+  try {
+    if (Object.keys(values).length) localStorage.setItem(STORE_PREFIX + tool.name, JSON.stringify({ v: 1, values }));
+    else localStorage.removeItem(STORE_PREFIX + tool.name);
+  } catch { /* プライベートモードなどで保存できなければ、保存しないだけ */ }
+}
+
+const fieldOf = (p) => document.querySelector(`.field[data-param="${CSS.escape(p.name)}"]`);
+const isNumStr = (s) => typeof s === "string" && (s === "" || (s.trim() !== "" && Number.isFinite(Number(s))));
+const numStr = (v) => (v === null || v === undefined ? "" : String(v));
+
+function getRaw(p) {
+  const wrap = fieldOf(p);
+  if (p.type === "bool") return wrap.querySelector("input").checked;
+  if (p.type === "range") return [...wrap.querySelectorAll("input")].map((e) => e.value);
+  return wrap.querySelector("input, select, textarea").value;
+}
+
+function setRaw(p, raw) {
+  const wrap = fieldOf(p);
+  if (p.type === "bool") wrap.querySelector("input").checked = raw;
+  else if (p.type === "range") wrap.querySelectorAll("input").forEach((e, i) => { e.value = raw[i]; });
+  else wrap.querySelector("input, select, textarea").value = raw;
+}
+
+function defaultRaw(p) {
+  if (p.type === "bool") return Boolean(p.default);
+  if (p.type === "range") return (p.default || [null, null]).map(numStr);
+  if (p.type === "json") return p.default === null ? "" : JSON.stringify(p.default, null, 1);
+  return numStr(p.default);
+}
+
+// この欄に入れられる raw か。入れられなければ null（その値は捨てて既定値のままにする）。
+function validRaw(p, raw) {
+  if (p.type === "bool") return typeof raw === "boolean" ? raw : null;
+  if (p.type === "choice") return p.choices.includes(raw) ? raw : null;
+  if (p.type === "range") return Array.isArray(raw) && raw.length === 2 && raw.every(isNumStr) ? raw : null;
+  if (p.type === "int") return isNumStr(raw) && (raw === "" || Number.isInteger(Number(raw))) ? raw : null;
+  if (p.type === "float") return isNumStr(raw) ? raw : null;
+  return typeof raw === "string" ? raw : null;
+}
+
+// 読み込んだ設定ファイルの値（CLI の --params と同じ形）を raw にする。
+function valueToRaw(p, v) {
+  if (p.type === "bool") return validRaw(p, v);
+  if (p.type === "range") return v === null ? ["", ""] : validRaw(p, Array.isArray(v) ? v.map(numStr) : null);
+  if (p.type === "json") return v === null ? "" : JSON.stringify(v, null, 1);
+  if (p.type === "choice") return validRaw(p, v);
+  return typeof v === "string" || typeof v === "number" || v === null ? validRaw(p, numStr(v)) : null;
+}
+
+function sameRaw(p, a, b) {
+  if (p.type === "range") return a.every((x, i) => sameRaw({ type: "float" }, x, b[i]));
+  if ((p.type === "int" || p.type === "float") && a !== "" && b !== "") return Number(a) === Number(b);
+  if (p.type === "json") return a.trim() === b.trim();
+  return a === b;
+}
+
+function changedValues(tool) {
+  const out = {};
+  for (const p of tool.params) {
+    const raw = getRaw(p);
+    if (!sameRaw(p, raw, defaultRaw(p))) out[p.name] = raw;
+  }
+  return out;
+}
+
+// 既定値と違う欄に印を付け、詳細設定の見出しに変えた数を出す。変えた欄の数を返す。
+function markChanged(tool) {
+  const changed = changedValues(tool);
+  let adv = 0;
+  for (const p of tool.params) {
+    const on = p.name in changed;
+    fieldOf(p).classList.toggle("changed", on);
+    if (on && p.advanced) adv += 1;
+  }
+  const s = document.querySelector("#params details.advanced > summary");
+  if (s) s.textContent = s.dataset.base + (adv ? ` ・変更 ${adv}` : "");
+  $("param-reset").disabled = Object.keys(changed).length === 0;
+  return changed;
+}
+
+function setNote(text, { error = false, undo = false } = {}) {
+  const note = $("param-note");
+  note.replaceChildren(text);
+  note.classList.toggle("err", error);
+  if (undo) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "linkbtn";
+    b.textContent = "元に戻す";
+    b.addEventListener("click", () => {
+      applyValues(state.tool, undoValues);
+      undoValues = null;
+      setNote("元に戻しました");
+    });
+    note.append(" ", b);
+  }
+}
+
+// raw の組を欄に入れる（無い欄は既定値）。入れられなかった名前を返す。
+function applyValues(tool, values) {
+  const rejected = [];
+  for (const p of tool.params) {
+    const has = values && Object.hasOwn(values, p.name);
+    const raw = has ? validRaw(p, values[p.name]) : null;
+    if (has && raw === null) rejected.push(p.name);
+    setRaw(p, raw === null ? defaultRaw(p) : raw);
+  }
+  const changed = markChanged(tool);
+  storeSet(tool, changed);
+  const adv = document.querySelector("#params details.advanced");
+  if (adv && tool.params.some((p) => p.advanced && p.name in changed)) adv.open = true;
+  return rejected;
+}
+
+function restoreParams(tool) {
+  undoValues = null;
+  const saved = storeGet(tool);
+  if (!saved) { markChanged(tool); return; }
+  const known = new Set(tool.params.map((p) => p.name));
+  const dropped = [...applyValues(tool, saved), ...Object.keys(saved).filter((k) => !known.has(k))];
+  const n = Object.keys(changedValues(tool)).length;
+  let text = n ? `前回の設定を復元しました（既定値から変えた項目 ${n}）` : "";
+  if (dropped.length) text += `${text ? "。" : ""}使えなくなった設定は既定値にしました: ${dropped.join(", ")}`;
+  setNote(text);
+}
+
+$("params").addEventListener("input", onParamEdit);
+$("params").addEventListener("change", onParamEdit);
+function onParamEdit() {
+  if (!state.tool || state.panel) return;
+  storeSet(state.tool, markChanged(state.tool));
+}
+
+$("param-reset").addEventListener("click", () => {
+  const tool = state.tool;
+  undoValues = changedValues(tool);
+  applyValues(tool, {});
+  setNote("既定値に戻しました", { undo: true });
+});
+
+// 書き出す形は {tool, params}。CLI の --params にもそのまま渡せる（manifest.json と同じ形）。
+$("param-export").addEventListener("click", () => {
+  const tool = state.tool;
+  let params;
+  try {
+    params = collectParams(tool);
+  } catch (err) {
+    setNote(`書き出せません: ${err.message}`, { error: true });
+    return;
+  }
+  const blob = new Blob([JSON.stringify({ tool: tool.name, params }, null, 2) + "\n"], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${tool.name}-params.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  setNote(`${a.download} を書き出しました（CLI では --params ${a.download}）`);
+});
+
+$("param-import").addEventListener("click", () => $("param-import-file").click());
+$("param-import-file").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  e.target.value = "";
+  if (!file) return;
+  const tool = state.tool;
+  let data;
+  try {
+    data = JSON.parse(await file.text());
+  } catch {
+    setNote(`${file.name} を JSON として読めません`, { error: true });
+    return;
+  }
+  let from = null;
+  if (data && typeof data === "object" && data.params && typeof data.params === "object" && "tool" in data) {
+    from = data.tool;
+    data = data.params;           // 書き出した設定・manifest.json
+  }
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    setNote(`${file.name} は設定の形（{名前: 値}）ではありません`, { error: true });
+    return;
+  }
+  // CLI の --params と同じく、ファイルに無い項目は既定値にする
+  const values = {};
+  const bad = [];
+  const known = new Set(tool.params.map((p) => p.name));
+  for (const p of tool.params) {
+    if (!Object.hasOwn(data, p.name)) continue;
+    const raw = valueToRaw(p, data[p.name]);
+    if (raw === null) bad.push(p.name);
+    else values[p.name] = raw;
+  }
+  undoValues = changedValues(tool);
+  bad.push(...applyValues(tool, values));
+  const unknown = Object.keys(data).filter((k) => !known.has(k));
+  let text = `${file.name} を読み込みました`;
+  if (from && from !== tool.name) text += `（${from} の設定。名前の合う項目だけ）`;
+  if (bad.length) text += `。値が合わず既定値にした項目: ${bad.join(", ")}`;
+  if (unknown.length) text += `。このツールに無い項目: ${unknown.join(", ")}`;
+  setNote(text, { undo: true });
+});
 
 // ============================================================ 実行
 function missingInputs() {

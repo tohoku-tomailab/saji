@@ -51,6 +51,15 @@
 
         <form id="form" novalidate>
           <div id="inputs"></div>
+          <div id="param-tools" class="param-tools">
+            <span id="param-note" class="param-note" aria-live="polite"></span>
+            <span class="param-btns">
+              <button id="param-reset" type="button" class="btn small">既定値に戻す</button>
+              <button id="param-export" type="button" class="btn small">設定を書き出す</button>
+              <button id="param-import" type="button" class="btn small" title="書き出した設定、または出力の manifest.json">設定を読み込む</button>
+              <input id="param-import-file" type="file" accept=".json,application/json" hidden>
+            </span>
+          </div>
           <div id="params"></div>
           <div class="actions">
             <button id="run" type="submit" class="primary">実行</button>

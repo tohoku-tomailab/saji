@@ -160,6 +160,19 @@ input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-
   outline: 2px solid var(--accent); outline-offset: 1px;
 }
 .field.invalid input, .field.invalid textarea { border-color: #c0392b; }
+/* 既定値から変えた欄（設定は localStorage に保存され、次に開いたときも残る） */
+.field.changed > label::before {
+  content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%;
+  background: var(--accent); vertical-align: 0.1em;
+}
+.param-tools {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 12px;
+  margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--line);
+}
+.param-note { font-size: 0.85rem; color: var(--muted); min-width: 0; }
+.param-note.err { color: #c0392b; }
+.param-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+.btn.small { padding: 4px 10px; font-size: 0.85rem; }
 details.advanced { margin-top: 18px; }
 details.advanced > summary { cursor: pointer; color: var(--muted); font-weight: 600; }
 
