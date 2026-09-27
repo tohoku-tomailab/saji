@@ -67,6 +67,7 @@ uv run pytest -q                                            # ネイティブ
 uv run python scripts/build_web.py                          # Web のビルド（web/dist）
 uv run --with playwright python scripts/test_pyodide.py     # Pyodide（初回は playwright install chromium）
 uv run --with playwright python scripts/check_web.py <tool> "<入力名>=<ファイル>"   # Web で1ツールを実行して確認
+uv run --with playwright python scripts/test_web_form.py    # Web のフォーム（設定の保存・復元・書き出し・読み込み）
 uv run python -m http.server -d web 8000                    # Web を手元で確認 → http://localhost:8000/
 # Windows で Edge を使うなら、Playwright を使う2つの前に SAJI_BROWSER_CHANNEL=msedge を設定する
 git config core.hooksPath scripts/hooks                     # pre-commit フック（実データ・生成物の混入防止）
