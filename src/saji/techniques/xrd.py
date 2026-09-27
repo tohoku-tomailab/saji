@@ -555,3 +555,132 @@ def overlay_figure(traces: list[dict], st: dict, *, offset: str | float = "auto"
         "ylim": [y_lo, y_hi],
     }
     return fig, info
+
+
+# ============================================================ 参照ピークを下に並べる重ね描き
+# xrd-overlay-2: 上のパネルに重ね描き（overlay_figure と同じ）、その下に参照1つにつき1パネルを
+# 密着させて並べ、参照ピークの位置に相対強度を高さにした縦棒を描く。データ上にはマーカーを付けない
+# （ピーク検出の成否に左右されず、参照位置との比較を見る人に任せる）。
+REF_PANEL_RATIO = 0.2      # 参照パネル1枚の高さ（上のパネルの描画領域の高さに対する比）
+REF_COLOR = "#222222"
+
+
+def _hkl_text(hkl) -> str:
+    if hkl is None:
+        return ""
+    if isinstance(hkl, (list, tuple)):
+        return " ".join(str(int(v)) for v in hkl)
+    return str(hkl)
+
+
+def load_refs(data: bytes) -> list[dict]:
+    """参照ピーク JSON を読む。1物質の dict、またはその list。
+
+    形（docs/data-formats.md の「参照ピーク JSON」）::
+
+        {"name": "Cu", "label": "Cu", "color": "#222222", "source": "...",
+         "peaks": [{"two_theta": 43.308, "intensity": 99, "hkl": [1, 1, 1]}, ...]}
+
+    label / color / source / hkl / intensity は省略可（intensity の省略は 100）。
+    強度は最大値を 100 にそろえる。戻り値は [{name, label, color, source, peaks: [{x, intensity, hkl}]}]。
+    """
+    doc = json.loads(data.decode("utf-8-sig"))
+    items = doc if isinstance(doc, list) else [doc]
+    out = []
+    for i, it in enumerate(items):
+        if not isinstance(it, dict) or not it.get("name") or not isinstance(it.get("peaks"), list):
+            raise ValueError(f"{i + 1} 番目の参照に name と peaks（リスト）がありません")
+        peaks = []
+        for j, p in enumerate(it["peaks"]):
+            try:
+                x = float(p["two_theta"])
+                inten = float(p.get("intensity", 100.0))
+            except (TypeError, KeyError, ValueError):
+                raise ValueError(f"{it['name']} の {j + 1} 番目のピークに two_theta（数値）がありません: {p!r}") from None
+            peaks.append({"x": x, "intensity": inten, "hkl": _hkl_text(p.get("hkl"))})
+        if not peaks:
+            raise ValueError(f"{it['name']} にピークがありません")
+        top = max(p["intensity"] for p in peaks)
+        if top > 0:
+            for p in peaks:
+                p["intensity"] = p["intensity"] / top * 100.0
+        out.append({"name": str(it["name"]), "label": str(it.get("label") or it["name"]),
+                    "color": it.get("color"), "source": it.get("source")})
+        out[-1]["peaks"] = peaks
+    return out
+
+
+def _plot_height_px(fig) -> float:
+    lay = fig["layout"]
+    return float(lay["height"]) - float(lay["margin"]["t"]) - float(lay["margin"]["b"])
+
+
+def overlay_ref_figure(traces: list[dict], refs: list[dict], st: dict, *,
+                       ref_height: float = REF_PANEL_RATIO, ref_min_intensity: float = 0.0,
+                       xlim=None, xlabel: str | None = None, **overlay_kw):
+    """上に重ね描き、下に参照ピークの縦棒のパネルを並べた図を作る。戻り値は (図, 情報 dict)。
+
+    上のパネルは overlay_figure（peaks なし）と同じ。参照パネルは上から refs の順で、x の範囲は
+    全パネル共通（xlim か、データの範囲）。縦棒の高さは最大 100 の相対強度で、
+    ref_min_intensity 未満の線と x の範囲外の線は描かない。物質名はパネルの右上に書く。
+    """
+    fig, info = overlay_figure(traces, st, xlim=xlim, xlabel=xlabel, **overlay_kw)
+    if xlim is not None and None not in xlim:
+        x_lo, x_hi = min(xlim), max(xlim)
+    else:
+        d_lo, d_hi = _nan_extent([t["x"] for t in traces])
+        x_lo = d_lo if xlim is None or xlim[0] is None else float(xlim[0])
+        x_hi = d_hi if xlim is None or xlim[1] is None else float(xlim[1])
+
+    n = len(refs)
+    main_px = _plot_height_px(fig)
+    ref_px = main_px * ref_height
+    fig["layout"]["height"] = int(round(fig["layout"]["height"] + n * ref_px))
+    total_px = main_px + n * ref_px
+    bottom = n * ref_px / total_px
+    fig["layout"]["yaxis"]["domain"] = [bottom, 1.0]
+    # 上のパネルの x は目盛の数値と軸名を出さない（一番下のパネルに出す）
+    set_axis(fig, "xaxis", st, range=[x_lo, x_hi], show_ticklabels=n == 0,
+             title=None if n else (xlabel or XLABEL))
+
+    # 物質名の文字の分だけ縦棒の上に余白を取る（縦棒が文字に重ならないように）
+    label_px = st["annotation"] * 1.25 + 8
+    y_top = 100.0 / max(0.35, 1.0 - label_px / max(ref_px, 1.0))
+
+    ref_infos = []
+    for k, ref in enumerate(refs):
+        no = k + 2
+        xk, yk, xr, yr = f"xaxis{no}", f"yaxis{no}", f"x{no}", f"y{no}"
+        hi = bottom - k * ref_px / total_px
+        lo = bottom - (k + 1) * ref_px / total_px
+        color = css_color(ref.get("color")) or REF_COLOR
+        shown = [p for p in ref["peaks"]
+                 if x_lo <= p["x"] <= x_hi and p["intensity"] >= ref_min_intensity]
+        xs, ys = [], []
+        for p in shown:
+            xs += [p["x"], p["x"], None]
+            ys += [0.0, p["intensity"], None]
+        if shown:
+            add_line(fig, xs, ys, ref["label"], st, color=color, width=st["line"],
+                     xaxis=xr, yaxis=yr, showlegend=False)
+        last = k == n - 1
+        # 内向きの目盛は縦棒と見分けにくいので、参照パネルでは一番下の軸にだけ外向きで付ける
+        # （上の枠線は1つ上のパネルの下の枠線が兼ねるので mirror しない）
+        set_axis(fig, xk, st, range=[x_lo, x_hi], show_ticklabels=last,
+                 title=(xlabel or XLABEL) if last else None, anchor=yr, mirror=False)
+        if last:
+            fig["layout"][xk]["ticks"] = "outside"
+        else:
+            fig["layout"][xk]["ticklen"] = 0
+        fig["layout"][xk]["matches"] = "x"      # ブラウザで拡大したとき全パネルの x を連動させる
+        set_axis(fig, yk, st, range=[0.0, y_top], show_ticklabels=False,
+                 domain=[max(0.0, lo), hi], anchor=xr)
+        fig["layout"][yk]["ticklen"] = 0       # 縦軸の目盛は不要（Plotly と matplotlib の両方で消える）
+        add_annotation(fig, 0.99, 0.96, ref["label"], st, color=color, xref=f"{xr} domain",
+                       yref=f"{yr} domain", xanchor="right", yanchor="top")
+        ref_infos.append({"name": ref["name"], "label": ref["label"], "color": color,
+                          "source": ref.get("source"), "n_peaks": len(ref["peaks"]),
+                          "n_shown": len(shown)})
+    info["refs"] = ref_infos
+    info["xlim"] = [x_lo, x_hi]
+    return fig, info

@@ -1,0 +1,5 @@
+[
+  {"name": "PhaseB", "color": "tab:red",
+   "peaks": [{"two_theta": 38.4, "intensity": 50}, {"two_theta": 60.0, "intensity": 25, "hkl": "11-1"}]},
+  {"name": "PhaseC", "peaks": [{"two_theta": 10.0}]}
+]

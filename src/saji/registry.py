@@ -14,6 +14,7 @@ from typing import Any
 TOOL_MODULES = [
     "xrd_process",
     "xrd_overlay",
+    "xrd_overlay_2",
     "xps_extract",
     "xps_plot",
     "xps_fit",

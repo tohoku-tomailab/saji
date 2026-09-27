@@ -26,6 +26,20 @@
 - マーカーは matplotlib の記号（`v` `^` `o` `s` `D` `*` `x` `+`）、色は `tab:red` などの matplotlib の
   色名か `#rrggbb`。マーカーと色は省略可（既定 `v` / `tab:red`）。
 
+## 参照ピーク JSON（XRD の参照パネル）
+
+- ツール: `xrd-overlay-2`（入力 `refs`、複数可）。1物質1ファイルが基本（物質の dict の list でも可）。
+- 形式:
+  ```json
+  {"name": "Cu2O", "label": "Cu<sub>2</sub>O", "color": "#222222", "source": "出典",
+   "peaks": [{"two_theta": 29.694, "intensity": 99, "hkl": [1, 1, 0]}, ...]}
+  ```
+- 必須は `name` と `peaks[].two_theta`（deg、Cu Kα を前提にした値）。`label`（図に書く名前。`<sub>` 可。
+  省略は name）、`color`（省略は黒）、`intensity`（省略は 100）、`hkl`（list か文字列）は省略可。
+  ほかのキー（`source`、`structure`、`d_nm` など）は読むだけで使わない（記録用。`source` はログに出す）。
+- 強度は読み込み時に最大値を 100 にそろえる。同じ 2θ に複数の反射があれば、別々の線として重ねて描く。
+- 研究室で使う参照（Au, Cu, Cu2O, CuO, Pd, PdO）は DB の書き出しから作ったもので、**リポジトリには入れない**。
+
 ## 処理済み XRD .xy
 
 - `xrd-process` の出力。先頭に `# 2theta  intensity  | bg=... smooth=... norm=... bin=...` の
@@ -33,7 +47,7 @@
 
 ## 2列 .xy（処理済み XRD パターンなど）
 
-- ツール: `xrd-overlay`（入力 `xy`）。`xrd-process` が出す `<名前>_processed.xy` がこの形。他装置の2列テキストも可。
+- ツール: `xrd-overlay` / `xrd-overlay-2`（入力 `xy`）。`xrd-process` が出す `<名前>_processed.xy` がこの形。他装置の2列テキストも可。
 - 形式: 1行に「x y」の2数値（空白またはタブ区切り）。`#` 以降はコメント。3列以上ある行は先頭2列を使う。
 - 列: 1列目 = 2θ（deg）、2列目 = 強度（counts か規格化値。単位は任意）。
 - 読み込みは numpy.loadtxt 相当（`core.tableio.load_xy_text`）。**ヘッダ行が `#` で始まらないファイル

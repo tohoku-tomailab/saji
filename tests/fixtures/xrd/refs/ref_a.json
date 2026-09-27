@@ -1,0 +1,11 @@
+{
+  "name": "PhaseA",
+  "label": "Phase<sub>A</sub>",
+  "source": "synthetic (tests only)",
+  "peaks": [
+    {"two_theta": 43.3, "intensity": 99, "hkl": [1, 1, 1]},
+    {"two_theta": 50.4, "intensity": 45, "hkl": [2, 0, 0]},
+    {"two_theta": 74.1, "intensity": 3, "hkl": [2, 2, 0]},
+    {"two_theta": 95.0, "intensity": 20, "hkl": [2, 2, 2]}
+  ]
+}
