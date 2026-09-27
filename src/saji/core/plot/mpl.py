@@ -165,7 +165,10 @@ class _Renderer:
             yd = self._yaxis(yk).get("domain") or [0, 1]
             rect = [L + xd[0] * PW, B + yd[0] * PH, (xd[1] - xd[0]) * PW, (yd[1] - yd[0]) * PH]
             ax = self.mfig.add_axes(rect)
-            ax.set_facecolor(to_mpl_color(self.layout.get("plot_bgcolor", "#ffffff")))
+            plot_bg = self.layout.get("plot_bgcolor", "#ffffff")
+            # 背景が図と同じ色なら塗らない（密着したパネルで、後の軸の背景が前の軸の枠線を隠さないように）
+            ax.set_facecolor("none" if plot_bg == self.layout.get("paper_bgcolor", "#ffffff")
+                             else to_mpl_color(plot_bg))
             self.axes[(xk, yk)] = ax
         for xk, yk in twins:
             under = self._yaxis(yk)["overlaying"]
