@@ -662,9 +662,10 @@ def overlay_ref_figure(traces: list[dict], refs: list[dict], st: dict, *,
         for p in shown:
             xs += [p["x"], p["x"], None]
             ys += [0.0, p["intensity"], None]
-        if shown:
-            add_line(fig, xs, ys, ref["label"], st, color=color, width=st["line"],
-                     xaxis=xr, yaxis=yr, showlegend=False)
+        # 描ける線が無くても空の系列を置く（系列の無い軸は Plotly でも matplotlib でもパネルが作られず、
+        # そのパネルと、一番下なら x の目盛の数値・軸名が消えるため）
+        add_line(fig, xs, ys, ref["label"], st, color=color, width=st["line"],
+                 xaxis=xr, yaxis=yr, showlegend=False)
         last = k == n - 1
         # 内向きの目盛は縦棒と見分けにくいので、参照パネルでは一番下の軸にだけ外向きで付ける
         # （上の枠線は1つ上のパネルの下の枠線が兼ねるので mirror しない）

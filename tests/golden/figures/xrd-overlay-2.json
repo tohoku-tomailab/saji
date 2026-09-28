@@ -2501,6 +2501,22 @@
     "dash": "solid",
     "color": "#d62728"
    }
+  },
+  {
+   "type": "scatter",
+   "mode": "lines",
+   "name": "PhaseC",
+   "x": [],
+   "y": [],
+   "xaxis": "x4",
+   "yaxis": "y4",
+   "showlegend": false,
+   "hovertemplate": "x=%{x:.4f}<br>y=%{y:.4g}<extra>%{fullData.name}</extra>",
+   "line": {
+    "width": 2.6,
+    "dash": "solid",
+    "color": "#222222"
+   }
   }
  ],
  "layout": {

@@ -66,8 +66,10 @@ def test_panels_and_sticks():
     assert [lay[k]["showticklabels"] for k in ("xaxis", "xaxis2", "xaxis3", "xaxis4")] == [False, False, False, True]
     assert "title" not in lay["xaxis"] and lay["xaxis4"]["title"]["text"] == "2θ (deg)"
     # 縦棒: 範囲外（95°）と弱い線（3 → 3.03 < 5）は描かない。PhaseC（10°）は線なし → 警告
+    # （線が無くてもパネルが作られるよう、空の系列は置く）
     sticks = {t["name"]: t for t in fig["data"] if t.get("yaxis") != "y"}
-    assert set(sticks) == {"Phase<sub>A</sub>", "PhaseB"}
+    assert set(sticks) == {"Phase<sub>A</sub>", "PhaseB", "PhaseC"}
+    assert sticks["PhaseC"]["x"] == [] and sticks["PhaseC"]["yaxis"] == "y4"
     a = sticks["Phase<sub>A</sub>"]
     assert a["x"] == [43.3, 43.3, None, 50.4, 50.4, None]
     assert a["y"][:2] == [0.0, 100.0] and a["showlegend"] is False
@@ -100,6 +102,25 @@ def test_without_refs_is_plain_overlay():
     lay = ex.previews[0]["spec"]["layout"]
     assert "yaxis2" not in lay and lay["xaxis"]["showticklabels"] is True
     assert lay["xaxis"]["title"]["text"] == "2θ (deg)"
+
+
+def test_empty_ref_panel_is_rendered():
+    """描ける線が無い参照（PhaseC）のパネルも PNG/SVG で作られ、一番下の x 軸の数値・軸名が残る。"""
+    from matplotlib.backends.backend_agg import FigureCanvasAgg
+    from matplotlib.figure import Figure
+
+    from saji.core.plot.mpl import _Renderer
+
+    spec = _run({"xlim": "30,80"}).previews[0]["spec"]
+    mfig = Figure()
+    FigureCanvasAgg(mfig)
+    r = _Renderer(spec, mfig)
+    r.draw()
+    assert set(r.axes) == {("x", "y"), ("x2", "y2"), ("x3", "y3"), ("x4", "y4")}
+    bottom = r.axes[("x4", "y4")]
+    assert bottom.get_xlabel() == "2θ (deg)"
+    assert any(t.get_text() for t in bottom.get_xticklabels())
+    assert "PhaseC" in [t.get_text() for t in bottom.texts]
 
 
 @pytest.mark.parametrize("tool", ["xrd-overlay", "xrd-overlay-2"])
