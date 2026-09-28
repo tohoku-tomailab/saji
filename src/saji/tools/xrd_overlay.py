@@ -56,6 +56,8 @@ TOOL = Tool(
               help=f"x 軸名（未指定なら \"{xrd.XLABEL}\"）"),
         Param("ylabel", str, None, group="図", advanced=True, label="y 軸名",
               help=f"y 軸名（未指定なら \"{xrd.OVERLAY_YLABEL}\"。normalize_each なら末尾に [each max-normalized]）"),
+        Param("show_yticks", bool, False, group="図", advanced=True, label="y目盛の数値",
+              help="y軸の目盛の数値を出す（オフセットを足した値で強度としては読めないので、既定は出さない）"),
         Param("legend", choices=("inside", "outside", "none"), default="inside", group="図",
               label="凡例", help="inside=軸内の右上 / outside=軸の右外 / none=出さない"),
         STYLE_PARAM,
@@ -157,7 +159,7 @@ def run(inputs: dict[str, list[InputFile]], params: dict) -> Result:
         peaks=peaks, peak_tol=params["peak_tol"], peak_prominence=params["peak_prominence"],
         peak_guides=params["peak_guides"], peaks_on=params["peaks_on"],
         title=params["title"], xlim=params["xlim"], xlabel=params["xlabel"],
-        ylabel=params["ylabel"], legend=params["legend"])
+        ylabel=params["ylabel"], legend=params["legend"], show_yticks=params["show_yticks"])
     result.add_figure("overlay", fig)
 
     if info["cmap"] != params["cmap"]:

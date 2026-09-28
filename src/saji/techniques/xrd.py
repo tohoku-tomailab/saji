@@ -455,7 +455,7 @@ def overlay_figure(traces: list[dict], st: dict, *, offset: str | float = "auto"
                    peak_prominence: float | None = None, peak_guides: bool = True,
                    peaks_on: str = "each", title: str | None = None, xlim=None,
                    xlabel: str | None = None, ylabel: str | None = None,
-                   legend: str = "inside"):
+                   legend: str = "inside", show_yticks: bool = False):
     """重ね描き（ウォーターフォール）の図を作る。戻り値は (図, 情報 dict)。
 
     traces: 描く順の [{label, x, y, color(None 可), offset(None 可)}, ...]。
@@ -467,6 +467,7 @@ def overlay_figure(traces: list[dict], st: dict, *, offset: str | float = "auto"
     peaks_on="top" なら、各ピークで最も上の系列にだけマーカーを付ける。
     y 軸の範囲は kaiseki（matplotlib の自動範囲 = データ + 余白 5%、注釈が収まるよう上端を
     広げる）と同じ値を明示する（Plotly の自動範囲は注釈の文字を含めないため）。
+    y の値はオフセットを足したものなので、既定では y の目盛の数値を出さない（show_yticks=True で出す）。
     """
     curves = []
     for t in traces:
@@ -546,7 +547,8 @@ def overlay_figure(traces: list[dict], st: dict, *, offset: str | float = "auto"
 
     default_ylabel = OVERLAY_YLABEL + ("  [each max-normalized]" if normalize_each else "")
     set_axis(fig, "xaxis", st, title=xlabel or XLABEL, range=xlim)
-    set_axis(fig, "yaxis", st, title=ylabel or default_ylabel, range=[y_lo, y_hi])
+    set_axis(fig, "yaxis", st, title=ylabel or default_ylabel, range=[y_lo, y_hi],
+             show_ticklabels=show_yticks)
 
     info = {
         "step": step, "cmap": used_cmap, "traces": infos, "peaks_missed": missed,

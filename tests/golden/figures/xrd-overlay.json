@@ -2737,7 +2737,7 @@
     "color": "#222222",
     "weight": "bold"
    },
-   "showticklabels": true,
+   "showticklabels": false,
    "automargin": true,
    "title": {
     "text": "Intensity (offset)  [each max-normalized]",

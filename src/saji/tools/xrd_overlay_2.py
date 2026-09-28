@@ -38,7 +38,7 @@ TOOL = Tool(
               help="参照パネル1枚の高さ（上のパネルの高さに対する比）。パネルの分だけ図が縦に伸びる"),
         Param("ref_min_intensity", float, 0.0, min=0, max=100, group="参照ピーク",
               label="描く最小の強度", help="相対強度（最大 100）がこれ未満の縦棒は描かない"),
-        *(_SHARED[k] for k in ("cmap", "xlim", "title", "xlabel", "ylabel", "legend", "style")),
+        *(_SHARED[k] for k in ("cmap", "xlim", "title", "xlabel", "ylabel", "show_yticks", "legend", "style")),
     ],
     packages=["numpy", "scipy"],
     plots=True,
@@ -79,7 +79,8 @@ def run(inputs: dict[str, list[InputFile]], params: dict) -> Result:
         ref_min_intensity=params["ref_min_intensity"], xlim=params["xlim"],
         xlabel=params["xlabel"], offset=offset, gap=params["gap"], cmap=params["cmap"],
         normalize_each=params["normalize_each"], bottom_up=params["bottom_up"],
-        title=params["title"], ylabel=params["ylabel"], legend=params["legend"])
+        title=params["title"], ylabel=params["ylabel"], legend=params["legend"],
+        show_yticks=params["show_yticks"])
     result.add_figure("overlay", fig)
 
     if info["cmap"] != params["cmap"]:

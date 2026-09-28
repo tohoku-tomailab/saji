@@ -102,6 +102,16 @@ def test_without_refs_is_plain_overlay():
     assert lay["xaxis"]["title"]["text"] == "2θ (deg)"
 
 
+@pytest.mark.parametrize("tool", ["xrd-overlay", "xrd-overlay-2"])
+def test_yticks_hidden_by_default(tool):
+    """y はオフセットを足した値なので、既定では目盛の数値を出さない（show_yticks で出す）。"""
+    refs = REFS if tool == "xrd-overlay-2" else None
+    for params, shown in (({}, False), ({"show_yticks": True}, True)):
+        lay = _run({"normalize_each": True, **params}, refs=refs, tool=tool).previews[0]["spec"]["layout"]
+        assert lay["yaxis"]["showticklabels"] is shown
+        assert lay["yaxis"]["ticks"] == "inside"          # 目盛線は残す
+
+
 def test_figure_snapshot():
     """図の JSON のスナップショット（意図して図を変えたときだけ SAJI_UPDATE_SNAPSHOTS=1 で作り直す）。"""
     ex = _run({"xlim": "30,80"})
