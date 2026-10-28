@@ -2,7 +2,7 @@
 
 数値処理は kaiseki-tool の xrd/process.py（元は ref/xrd_process.py）と等価に保つ。
 重ね描き（xrd-overlay）は kaiseki-tool の xrd/overlay.py と等価に保つ（末尾の「重ね描き」）。
-入力形式は docs/data-formats.md の「Rigaku SmartLab .TXT」「2列 .xy」を参照。
+入力形式は docs/data-formats.md の「Rigaku SmartLab .TXT / RAS 形式テキスト」「2列 .xy」を参照。
 
 処理順序:  ビニング(任意) -> バックグラウンド除去 -> スムージング -> 規格化
   背景を先に引くので最終曲線のベースラインは≒0。ピーク検出はこの最終曲線に対して
@@ -35,15 +35,50 @@ _trapz = getattr(np, "trapezoid", None) or getattr(np, "trapz")
 
 
 # ============================================================ 読み込み
+# SmartLab Studio II の RAS 形式テキスト（`*KEY "value"` のヘッダ。*_cps.txt / *_counts.txt）。
+# キー -> 旧 .TXT と同じ表示用の名前。"_kV" / "_mA" は X-Ray にまとめるための作業用。
+_RAS_KEYS = {
+    "FILE_SAMPLE": "Sample",
+    "MEAS_SCAN_START": "Start",
+    "MEAS_SCAN_STOP": "Stop",
+    "MEAS_SCAN_STEP": "Step",
+    "MEAS_SCAN_AXIS_X": "ScanningMode",
+    "MEAS_SCAN_UNIT_Y": "Unit",
+    "HW_GONIOMETER_NAME": "Goniometer",
+    "HW_ATTACHMENT_NAME": "Attachment",
+    "MEAS_COND_XG_VOLTAGE": "_kV",
+    "MEAS_COND_XG_CURRENT": "_mA",
+}
+
+
 def parse_metadata(text: str) -> dict[str, str]:
-    """SmartLab のヘッダから測定条件をゆるく拾う（表示用）。"""
+    """ヘッダから測定条件をゆるく拾う（表示用）。
+
+    旧 .TXT（`Start<TAB>20` 形式）と RAS 形式（`*MEAS_SCAN_START "20.0000"`）の両方に対応する。
+    RAS 形式では強度の単位（cps / counts）を meta["Unit"] に、管電圧・管電流を "45kV/200mA"
+    の形で meta["X-Ray"] に入れる。無い項目は入れない。
+    """
     meta = {}
     keys = ["Sample", "Start", "Stop", "Step", "X-Ray", "ScanningMode", "Goniometer", "Attachment"]
     for line in text.splitlines():
+        if line.startswith("*"):
+            key, _, val = line[1:].partition(" ")
+            name = _RAS_KEYS.get(key)
+            if name:
+                meta[name] = val.strip().strip('"')
+            continue
         for k in keys:
             if line.startswith(k):
                 meta[k] = line[len(k):].strip()
+    kv, ma = meta.pop("_kV", None), meta.pop("_mA", None)
+    if kv and ma:
+        meta["X-Ray"] = f"{kv}kV/{ma}mA"
     return meta
+
+
+def intensity_label(meta: dict[str, str] | None) -> str:
+    """強度軸のラベル。ヘッダに強度の単位（RAS 形式）があればそれ、無ければ counts。"""
+    return f"Intensity ({(meta or {}).get('Unit') or 'counts'})"
 
 
 def load_smartlab(text: str) -> tuple[np.ndarray, np.ndarray, dict[str, str]]:
@@ -299,10 +334,11 @@ def _ymax(*arrays, pad=1.0) -> float:
 
 
 def process_figure(res: dict, st: dict, *, title: str, peaks=None, show_raw=True,
-                   show_background=True, peak_tol=0.3, peak_prominence=None):
+                   show_background=True, peak_tol=0.3, peak_prominence=None, meta=None):
     """前処理結果の図を作る。戻り値は (図, ピーク検出結果)。
 
     規格化ありなら左軸=生データ・背景（counts）、右軸=規格化後。
+    meta（load_smartlab の戻り値）に強度の単位があれば、強度軸のラベルに使う（既定 counts）。
     """
     x, final = res["x"], res["y_final"]
     has_bg = res["bg_method"] != "none"
@@ -349,7 +385,7 @@ def process_figure(res: dict, st: dict, *, title: str, peaks=None, show_raw=True
                 left_top = max(left_top, top)
 
     set_axis(fig, "xaxis", st, title=XLABEL)
-    set_axis(fig, "yaxis", st, title="Intensity (counts)", range=[0, left_top], mirror=not normed)
+    set_axis(fig, "yaxis", st, title=intensity_label(meta), range=[0, left_top], mirror=not normed)
     if normed:
         target = res["norm_info"].get("target", 1.0)
         set_axis(fig, "yaxis2", st, title=f"Normalized intensity (target={target:g})",

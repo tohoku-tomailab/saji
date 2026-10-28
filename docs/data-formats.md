@@ -10,14 +10,22 @@
 - 表形式の入力は **列名で列を探す**（列順・列の有無・前置きの行に強い）。列名は全角/半角・大文字小文字・
   記号・空白を無視して照合する（`core/tableio.resolve_columns`）。
 
-## Rigaku SmartLab .TXT（XRD）
+## Rigaku SmartLab .TXT / RAS 形式テキスト（XRD）
 
 - ツール: `xrd-process`
 - CP932 のテキスト。先頭に測定条件のヘッダ（`Sample`, `Start`, `Stop`, `Step`, `X-Ray`,
   `ScanningMode`, `Goniometer`, `Attachment` などで始まる行）があり、そのあとに「2θ 強度」の2列が並ぶ。
 - ヘッダの行数は一定でないので、**「数値2つだけの行」をデータ行とみなして**抜き出す。
 - 2θ の単位は deg、強度は counts。
-- 要確認: `*RAS_INT_START` などの区切り行の有無、ステップ・範囲の典型値、1ファイルの大きさ。
+- **SmartLab Studio II の RAS 形式テキスト**（`*_cps.txt` / `*_counts.txt` など）も同じツールで読める。
+  ヘッダは `*MEAS_SCAN_START "20.0000"` のような `*キー "値"` の行で、データ行は同じく「2θ 強度」の2列
+  （区切りは空白）。拾うキー: `FILE_SAMPLE`（Sample）, `MEAS_SCAN_START/STOP/STEP`,
+  `MEAS_SCAN_AXIS_X`（ScanningMode）, `MEAS_SCAN_UNIT_Y`（強度の単位）, `HW_GONIOMETER_NAME`,
+  `HW_ATTACHMENT_NAME`, `MEAS_COND_XG_VOLTAGE` と `MEAS_COND_XG_CURRENT`（`45kV/200mA` にまとめる）。
+  強度の単位（cps / counts）は図の強度軸のラベルに反映する（ヘッダに無ければ counts）。
+  旧 .TXT の出力（数値・図）は変わらない。測定条件は表示用で、処理には使わない。
+  cps と counts のデータを混ぜて比べるときは、単位が違うことに注意（規格化で揃えるとよい）。
+- 要確認: 実ファイルでの `*RAS_INT_START` などの区切り行の有無、ステップ・範囲の典型値、1ファイルの大きさ。
 
 ## ピーク表 JSON（XRD のピーク帰属）
 

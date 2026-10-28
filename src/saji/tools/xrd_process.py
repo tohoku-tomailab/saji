@@ -12,12 +12,12 @@ TOOL = Tool(
     description=(
         "処理順はビニング → 背景除去 → 平滑化 → 規格化。ファイルごとに処理済みの "
         "<名前>_processed.xy（2列: 2θ 強度）と図 <名前>_plot を出す。"
-        "入力形式は docs/data-formats.md の『Rigaku SmartLab .TXT』を参照。"
+        "入力形式は docs/data-formats.md の『Rigaku SmartLab .TXT / RAS 形式テキスト』を参照。"
         "peaks にピーク表 JSON（[[2θ, 物質名, マーカー, 色], ...]）を渡すと、"
         "ピークが立っている位置に帰属のマーカーを付ける。"
     ),
     inputs=[
-        FileInput("raw", accept=[".txt"], multiple=True, help="SmartLab の .TXT"),
+        FileInput("raw", accept=[".txt"], multiple=True, help="SmartLab の .TXT（SmartLab Studio II の *_cps.txt / *_counts.txt も可）"),
         FileInput("peaks", accept=[".json"], required=False,
                   help="ピーク表 JSON（[[2θ, 物質名, マーカー, 色], ...]。例 [[43.30, \"Cu(111)\", \"v\", \"tab:red\"]]）"),
     ],
@@ -104,7 +104,7 @@ def run(inputs: dict[str, list[InputFile]], params: dict) -> Result:
     summaries = []
     for f in inputs["raw"]:
         try:
-            x, y, _meta = xrd.load_smartlab(f.text())
+            x, y, meta = xrd.load_smartlab(f.text())
         except ValueError as exc:
             raise InputError(f"{f.name}: {exc}") from exc
         res = xrd.process(x, y, bin_factor=params["bin"], bg_method=params["bg"],
@@ -123,7 +123,8 @@ def run(inputs: dict[str, list[InputFile]], params: dict) -> Result:
         result.add_file(f"{f.stem}_processed.xy", xrd.format_xy(res))
         fig, found = xrd.process_figure(
             res, st, title=f.name, peaks=peaks, show_raw=params["show_raw"],
-            peak_tol=params["peak_tol"], peak_prominence=params["peak_prominence"])
+            peak_tol=params["peak_tol"], peak_prominence=params["peak_prominence"],
+            meta=meta)
         result.add_figure(f"{f.stem}_plot", fig)
         missed = [p["material"] for p in found if not p["found"]]
         if missed:
